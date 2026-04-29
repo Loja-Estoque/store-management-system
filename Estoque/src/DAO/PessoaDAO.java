@@ -11,12 +11,14 @@ public class PessoaDAO {
     public Pessoa[] pessoa = new Pessoa[5];
     public int proximaPosicao = 0;
     
-    public void adicionar(Pessoa p) {
+    public boolean adicionar(Pessoa p) {
         if(proximaPosicao < pessoa.length){
             pessoa[proximaPosicao] = p;
             proximaPosicao++;
+            
+            return true;
         } else {
-            System.out.println("Erro: Capacidade máxima atingida.");
+            return false;
         }
     }
     
@@ -35,5 +37,19 @@ public class PessoaDAO {
         }
         return false;
     }
+    
+        public void mostrarTodos() {
+        boolean temPessoa = false;
+        for (Pessoa j : pessoa) {
+            if (j != null) {
+                System.out.println(j);
+                temPessoa = true;
+            }
+        }
+        if (!temPessoa) {
+            System.out.println("não existe pessoa cadastrada");
+        }
+    }
+
    
 }

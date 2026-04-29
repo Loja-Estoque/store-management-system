@@ -23,10 +23,12 @@ public class Trabalho {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         
+        Menu mn = new Menu();
+        
         int op1 = 9999;
         while(op1 !=0){ 
 
-            //op1 = Menu1();
+            op1 = mn.Menu1();
         
             switch (op1) {
                 case 0:
@@ -38,6 +40,9 @@ public class Trabalho {
                 case 2:
                     System.out.println("2 - Cadastrar Usuario\n");
                     break;
+                case 3:
+                    System.out.println("3 - Mostrar produtos\n");
+                    break;
                 default:
                     System.out.println("Por favor, escolha uma opcao valida\n");
                     break;
@@ -47,52 +52,7 @@ public class Trabalho {
         System.out.println("\n\nSaiu do programa");
     }
 
-    int Menu1()
-    {
-        Scanner scanner = new Scanner(System.in);
-        StringBuilder builder = new StringBuilder("");
-        builder.append("SEJA BEM VINDO AO NOSSO PROGRAMA\n\n");
-        builder.append("LISTA DE PRODUTOS CADASTRADOS\n");
-        builder.append("--------------------------------\n");
-        builder.append("0 - Para sair do programa\n");
-        builder.append("1 - Fazer login\n");
-        builder.append("2 - Cadastrar Usuario\n");
-        builder.append("Qual opcao deseja: ");
-
-        System.out.println(builder.toString());
-
-        return Integer.parseInt(scanner.nextLine());
-    }
-
-    void CriarUsuario()
-    {
-         Scanner scanner = new Scanner(System.in);
-        StringBuilder builder = new StringBuilder("");
-        builder.append("Informe seu nome: ");
-        String n = scanner.nextLine();
-        builder.append("Informe seu documento: ");
-        String documento = scanner.nextLine();
-        builder.append("Informe sua data de nascimento: ");
-        String nascimento = scanner.nextLine();
-
-        // trasformando string em local date
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy");
-
-        LocalDate birthday = LocalDate.parse(nascimento, dtf);
-
-        // criando pessoa;
-        Pessoa p = new Pessoa();
-
-        p.setNome(n);
-        p.setDocumento(documento);
-        p.setNascimento(birthday);
-
-        // como adiciona pessoa no vetor?????? 
-        PessoaDAO pDAO = new PessoaDAO();
-        pDAO.adicionar(p);
-
-        //verificar se já existe
-    }
+    
 
     /*
     Usuário:
