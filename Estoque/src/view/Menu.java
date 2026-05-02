@@ -14,7 +14,7 @@ import java.util.Scanner;
  * @author Aluno
  */
 public class Menu {
-    int Menu1()
+    public int Menu1()
     {
         Scanner scanner = new Scanner(System.in);
         StringBuilder builder = new StringBuilder("");
@@ -32,7 +32,7 @@ public class Menu {
         return Integer.parseInt(scanner.nextLine());
     }
 
-    void MenuCriarUsuario()
+    public void MenuCriarUsuario()
     {
          Scanner scanner = new Scanner(System.in);
         StringBuilder builder = new StringBuilder("");
