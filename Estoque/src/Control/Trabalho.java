@@ -42,7 +42,20 @@ public class Trabalho {
                         System.out.println("Saindo ...\n");
                         break;
                     case 1:
-                        System.out.println("1 - Fazer Login\n");
+                        System.out.println("Login: ");
+                        String login = scanner.nextLine();
+                        System.out.println("Senha: ");
+                        String senha = scanner.nextLine();
+                        Usuario logado = usuarioDAO.buscaUsuarioLogin(login, senha);
+                        
+                        if(logado != null){
+                            System.out.println("Usuario Logado");
+                            
+                            //loop adm ou comum
+                        } else {
+                            System.out.println("Usuario invalido. Tente novamente");
+                        }
+                        
                         break;
                     case 2:
                         Pessoa temp = this.criaPessoa();
