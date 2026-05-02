@@ -6,10 +6,12 @@ package Control;
 
 
 import DAO.PessoaDAO;
+import DAO.UsuarioDAO;
 import model.Pessoa;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import model.Usuario;
 import view.Menu;
 
 /**
@@ -21,6 +23,10 @@ public class Trabalho {
     /**
      * @param args the command line arguments
      */
+    
+    private PessoaDAO pessoaDAO = new PessoaDAO();
+    private UsuarioDAO usuarioDAO = new UsuarioDAO();
+    
     Scanner scanner = new Scanner(System.in);
         
         Menu mn = new Menu();
@@ -39,7 +45,21 @@ public class Trabalho {
                         System.out.println("1 - Fazer Login\n");
                         break;
                     case 2:
-                        System.out.println("2 - Cadastrar Usuario\n");
+                        Pessoa temp = this.criaPessoa();
+                        if(pessoaDAO.adicionar(temp)){
+                            System.out.println("Pessoa adicionada com sucesso");
+                            Usuario tempu = this.criaUsuario(temp);
+                            if(usuarioDAO.Adicionar(tempu))
+                            {
+                                System.out.println("Usuario adicionado com sucesso");
+                            } else{
+                                System.out.println("Usuario nao adicionado");
+                            }
+                            
+                        } else{
+                            System.out.println("Pessoa nao adicionada");
+                        }
+                        
                         break;
                     case 3:
                         System.out.println("3 - Mostrar produtos\n");
@@ -58,6 +78,43 @@ public class Trabalho {
         
     }
 
+    private Pessoa criaPessoa()
+    {
+        Pessoa p = new Pessoa();
+        //Scanner scanner = new Scanner(System.in);
+        System.out.println("Informe seu nome: ");
+        p.setNome(scanner.nextLine());
+        System.out.println("Informe seu documento: ");
+         p.setDocumento(scanner.nextLine());
+         
+        System.out.println("Informe sua data de nascimento (dd/mm/aa): ");
+        String nascimento = scanner.nextLine();
+
+        // trasformando string em local date
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy");
+
+        LocalDate birthday = LocalDate.parse(nascimento, dtf);      
+        //criando pessoa;
+        p.setNascimento(birthday);
+
+        return p;
+        
+    }
+    
+    private Usuario criaUsuario(Pessoa p)
+    {
+        Usuario u1 = new Usuario();
+        
+        u1.setPessoa(p);
+        
+        System.out.println("Informe seu login: ");
+        u1.setLogin(scanner.nextLine());
+         
+        System.out.println("Informe sua senha: ");
+        u1.setSenha(scanner.nextLine());
+         
+        return u1;
+    }
     
 
     /*

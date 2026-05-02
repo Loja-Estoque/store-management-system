@@ -5,6 +5,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Usuario {
     private static long serial;
@@ -23,6 +24,14 @@ public class Usuario {
         this.senha = senha;
         this.data_criacao = data_criacao;
         this.data_modificacao = data_modificacao;
+    }
+    public Usuario()
+    {
+        this.id = ++Usuario.serial;
+        
+        this.data_criacao = LocalDateTime.now();
+        
+        this.data_modificacao = LocalDateTime.now();
     }
     
     public long getId(){
@@ -43,6 +52,7 @@ public class Usuario {
     
     public void setLogin(String login) {
         this.login = login;
+        this.data_modificacao = LocalDateTime.now();
     }
     
     public String getSenha(){
@@ -51,26 +61,44 @@ public class Usuario {
     
     public void setSenha(String senha) {
         this.senha = senha;
+        this.data_modificacao = LocalDateTime.now();
     }
     
     public LocalDateTime getData_criacao() {
         return data_criacao;
     } 
     
-    public void setData_criacao(LocalDateTime data_criacao) {
-        this.data_criacao = data_criacao;
-    }
     
     public LocalDateTime getData_modificacao() {
         return data_modificacao;
     }
     
-    public void setData_modificacao(LocalDateTime data_modificacao) {
-        this.data_modificacao = data_modificacao;
-    }
 
     @Override
     public String toString() {
         return "Usuario{" + "id=" + id + ", pessoa=" + pessoa + ", login=" + login + ", senha=" + senha + ", data_criacao=" + data_criacao + ", data_modificacao=" + data_modificacao + '}';
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.login);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Usuario other = (Usuario) obj;
+        return Objects.equals(this.login, other.login);
+    }
+
 }

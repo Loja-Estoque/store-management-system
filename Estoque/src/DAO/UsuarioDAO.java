@@ -16,7 +16,8 @@ public class UsuarioDAO {
     public UsuarioDAO(){
         
     }
-    Usuario buscaUsuarioLogin(String login, String senha) {
+    
+    public Usuario buscaUsuarioLogin(String login, String senha) {
          for (Usuario u : usuarios) {
             if (u != null && u.getLogin().equals(login) &&
                     u.getSenha().equals(senha)) {
@@ -26,7 +27,7 @@ public class UsuarioDAO {
         return null;
     }
     
-    boolean Adicionar(Usuario u)
+    public boolean Adicionar(Usuario u)
     {
         int ProximaPosicaoLivre = this.proximaPosicaoLivre();
         if(ProximaPosicaoLivre != -1)

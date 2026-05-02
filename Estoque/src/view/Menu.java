@@ -32,35 +32,4 @@ public class Menu {
         return Integer.parseInt(scanner.nextLine());
     }
 
-    public void MenuCriarUsuario()
-    {
-         Scanner scanner = new Scanner(System.in);
-        StringBuilder builder = new StringBuilder("");
-        builder.append("Informe seu nome: ");
-        String n = scanner.nextLine();
-        builder.append("Informe seu documento: ");
-        String documento = scanner.nextLine();
-        builder.append("Informe sua data de nascimento: ");
-        String nascimento = scanner.nextLine();
-
-        // trasformando string em local date
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy");
-
-        LocalDate birthday = LocalDate.parse(nascimento, dtf);      
-        
-        /*
-        // criando pessoa;
-        Pessoa p = new Pessoa();
-
-        p.setNome(n);
-        p.setDocumento(documento);
-        p.setNascimento(birthday);
-
-        // como adiciona pessoa no vetor?????? 
-        PessoaDAO pDAO = new PessoaDAO();
-        pDAO.adicionar(p);
-
-        //verificar se já existe
-        */
-    }
 }
