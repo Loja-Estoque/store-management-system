@@ -16,6 +16,16 @@ public class UsuarioDAO {
     public UsuarioDAO(){
         
     }
+    Usuario buscaUsuarioLogin(String login, String senha) {
+         for (Usuario u : usuarios) {
+            if (u != null && u.getLogin().equals(login) &&
+                    u.getSenha().equals(senha)) {
+                return u;
+            }
+        }
+        return null;
+    }
+    
     boolean Adicionar(Usuario u)
     {
         int ProximaPosicaoLivre = this.proximaPosicaoLivre();
@@ -36,6 +46,30 @@ public class UsuarioDAO {
 
         }
         return -1;
+
+    }
+    
+    public void mostrarTodos() {
+        boolean temUsuario = false;
+        for (Usuario u : usuarios) {
+            if (u != null) {
+                System.out.println(u);
+                temUsuario = true;
+            }
+        }
+        if (!temUsuario) {
+            System.out.println("nao existe jogador cadastrado");
+        }
+    }
+    
+    public boolean remover(String login) {
+        for (int i = 0; i < usuarios.length; i++) {
+            if (usuarios[i] != null && usuarios[i].getLogin().equals(login)) {
+                usuarios[i] = null;
+                return true;
+            }
+        }
+        return false;
 
     }
 }
