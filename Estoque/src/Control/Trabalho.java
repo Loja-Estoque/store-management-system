@@ -6,6 +6,7 @@ package Control;
 
 
 import DAO.PessoaDAO;
+import DAO.ProdutoDAO;
 import DAO.UsuarioDAO;
 import model.Pessoa;
 import java.time.LocalDate;
@@ -26,6 +27,7 @@ public class Trabalho {
     
     private PessoaDAO pessoaDAO = new PessoaDAO();
     private UsuarioDAO usuarioDAO = new UsuarioDAO();
+    private ProdutoDAO produtoDAO = new ProdutoDAO();
     
     Scanner scanner = new Scanner(System.in);
         
@@ -75,7 +77,7 @@ public class Trabalho {
                         
                         break;
                     case 3:
-                        System.out.println("3 - Mostrar produtos\n");
+                        produtoDAO.mostrarTodos();
                         break;
                     default:
                         System.out.println("Por favor, escolha uma opcao valida\n");

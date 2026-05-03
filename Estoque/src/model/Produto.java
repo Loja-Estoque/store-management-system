@@ -23,6 +23,14 @@ public class Produto {
         this.data_criacao = data_criacao;
         this.data_modificacao = data_modificacao;
     }
+    
+    public Produto()
+    {
+        this.id = ++Produto.serial;
+        
+        this.data_criacao = LocalDateTime.now();
+        this.data_modificacao = LocalDateTime.now();
+    }
 
     public long getId() {
         return id;
@@ -50,26 +58,25 @@ public class Produto {
 
     public void setNome(String nome) {
         this.nome = nome;
+        this.data_modificacao = LocalDateTime.now();
     }
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+        this.data_modificacao = LocalDateTime.now();
     }
 
     public void setPreco_venda(double preco_venda) {
         this.preco_venda = preco_venda;
+        this.data_modificacao = LocalDateTime.now();
     }
 
-    public void setData_criacao(LocalDateTime data_criacao) {
-        this.data_criacao = data_criacao;
-    }
-
-    public void setData_modificacao(LocalDateTime data_modificacao) {
-        this.data_modificacao = data_modificacao;
-    }
+    
 
     @Override
     public String toString() {
-        return "Produto{" + "id=" + id + ", nome=" + nome + ", descricao=" + descricao + ", preco_venda=" + preco_venda + ", data_criacao=" + data_criacao + ", data_modificacao=" + data_modificacao + '}';
+        return "id:" + id + ",\nnome:" + nome + ",\ndescricao:" + descricao + ",\npreco_venda: R$" + preco_venda + "\n";
     }
+    
+    
 }
