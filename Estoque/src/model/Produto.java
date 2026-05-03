@@ -12,6 +12,9 @@ public class Produto {
     private String nome;
     private String descricao;
     private double preco_venda;
+    private boolean ativo;
+
+    
     private LocalDateTime data_criacao;
     private LocalDateTime data_modificacao;
     
@@ -30,7 +33,18 @@ public class Produto {
         
         this.data_criacao = LocalDateTime.now();
         this.data_modificacao = LocalDateTime.now();
+        this.ativo = true;
     }
+    
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+        this.data_modificacao = LocalDateTime.now();
+    }
+    
 
     public long getId() {
         return id;
@@ -75,7 +89,7 @@ public class Produto {
 
     @Override
     public String toString() {
-        return "id:" + id + ",\nnome:" + nome + ",\ndescricao:" + descricao + ",\npreco_venda: R$" + preco_venda + "\n";
+        return "id:" + id + ",\nnome:" + nome + ", \nAtivo: "+ ativo  +",\ndescricao:" + descricao + ",\npreco_venda: R$" + preco_venda + "\n";
     }
     
     

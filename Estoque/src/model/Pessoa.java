@@ -26,6 +26,14 @@ public class Pessoa {
         this.data_modificacao = data_modificacao;
     }*/
     
+    public Pessoa()
+    {
+        this.id = ++Pessoa.serial;
+         
+        this.data_criacao = LocalDateTime.now();
+        this.data_modificacao = LocalDateTime.now();
+    }
+    
     public long getId(){
         return id;
     }

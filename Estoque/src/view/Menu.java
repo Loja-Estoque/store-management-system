@@ -25,11 +25,15 @@ public class Menu {
         builder.append("1 - Fazer login\n");
         builder.append("2 - Cadastrar Usuario\n");
         builder.append("3 - Mostrar produtos\n");
+        builder.append("4 - Mostrar Usuarios\n");
+        builder.append("5 - Mostrar Pessoas\n");
         builder.append("Qual opcao deseja: ");
 
         System.out.println(builder.toString());
 
         return Integer.parseInt(scanner.nextLine());
     }
+    
+    
 
 }

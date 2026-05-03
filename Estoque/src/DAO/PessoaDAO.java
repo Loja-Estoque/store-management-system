@@ -6,10 +6,26 @@ package DAO;
 
 import java.util.Arrays;
 import model.Pessoa;
+import java.time.LocalDate;
 
 public class PessoaDAO {
     public Pessoa[] pessoa = new Pessoa[5];
     public int proximaPosicao = 0;
+    
+    public PessoaDAO()
+    {
+        Pessoa Adm = new Pessoa();
+        Adm.setNome("Adm");
+        Adm.setDocumento("12345678");
+        Adm.setNascimento(LocalDate.now());
+        this.adicionar(Adm);
+        
+        Pessoa Comum = new Pessoa();
+        Comum.setNome("Comum");
+        Comum.setDocumento("87456123");
+        Comum.setNascimento(LocalDate.now());
+        this.adicionar(Comum);
+    }
     
     public boolean adicionar(Pessoa p) {
         if(proximaPosicao < pessoa.length){

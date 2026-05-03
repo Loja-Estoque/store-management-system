@@ -26,7 +26,7 @@ public class Trabalho {
      */
     
     private PessoaDAO pessoaDAO = new PessoaDAO();
-    private UsuarioDAO usuarioDAO = new UsuarioDAO();
+    private UsuarioDAO usuarioDAO = new UsuarioDAO(pessoaDAO);
     private ProdutoDAO produtoDAO = new ProdutoDAO();
     
     Scanner scanner = new Scanner(System.in);
@@ -51,7 +51,18 @@ public class Trabalho {
                         Usuario logado = usuarioDAO.buscaUsuarioLogin(login, senha);
                         
                         if(logado != null){
-                            System.out.println("Usuario Logado");
+                            
+                            if(logado.getLogin() == "Administrador")
+                            {
+                                System.out.println("Usuario Administrador logado");
+                                System.out.println("Prox Menu");
+                            } else if(logado.getLogin() == "Comum")
+                            {
+                                System.out.println("Usuario comum logado");
+                                System.out.println("Prox Menu");
+                            } else{
+                                System.out.println("Usuario Logado");
+                            }                          
                             
                             //loop adm ou comum
                         } else {
@@ -78,6 +89,13 @@ public class Trabalho {
                         break;
                     case 3:
                         produtoDAO.mostrarTodos();
+                        break;
+                        
+                    case 4:
+                        usuarioDAO.mostrarTodos();
+                        break;
+                    case 5:
+                        pessoaDAO.mostrarTodos();
                         break;
                     default:
                         System.out.println("Por favor, escolha uma opcao valida\n");

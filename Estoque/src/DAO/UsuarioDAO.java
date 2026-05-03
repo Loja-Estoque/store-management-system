@@ -5,6 +5,7 @@
 package DAO;
 
 import model.Usuario;
+import model.Pessoa;
 
 /**
  *
@@ -13,8 +14,24 @@ import model.Usuario;
 public class UsuarioDAO {
     private Usuario[] usuarios = new Usuario[5];
     
-    public UsuarioDAO(){
+    public UsuarioDAO(PessoaDAO pessoaDAO){
+        Pessoa pAdm = pessoaDAO.buscarPorId(1);
+        Pessoa pCm = pessoaDAO.buscarPorId(2);
         
+        if(pAdm != null)
+        {
+            Usuario uAdimin = new Usuario();
+            uAdimin.setPessoa(pAdm);
+            uAdimin.setLogin("Administrador");
+            uAdimin.setSenha("1234");
+            this.Adicionar(uAdimin);
+            
+            Usuario uComum = new Usuario();
+            uComum.setPessoa(pCm);
+            uComum.setLogin("Comum");
+            uComum.setSenha("1234");
+            this.Adicionar(uComum);
+        }
     }
     
     public Usuario buscaUsuarioLogin(String login, String senha) {
@@ -59,7 +76,7 @@ public class UsuarioDAO {
             }
         }
         if (!temUsuario) {
-            System.out.println("nao existe jogador cadastrado");
+            System.out.println("nao existe usuario cadastrado");
         }
     }
     
