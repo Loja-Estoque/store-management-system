@@ -167,6 +167,12 @@ public class Trabalho {
                 break;
                 case 2:
                     System.out.println("2 - Comprar");
+                    //qual item deseja comprar
+                    //quantidade de itens que irá comprar
+                    //mais algum item? repete se sim
+                    //algum cupom de desconto?
+                    //se sim, aplicar cupom
+                    //abaixar o estoque
                     produtoDAO.mostrarTodos();
                 break;
                 case 3:
