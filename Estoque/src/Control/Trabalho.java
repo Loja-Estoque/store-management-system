@@ -59,7 +59,9 @@ public class Trabalho {
                             } else if(logado.getLogin() == "Comum")
                             {
                                 System.out.println("Usuario comum logado");
-                                System.out.println("Prox Menu");
+                                op1 =0;
+                                Comprar();
+                                
                             } else{
                                 System.out.println("Usuario Logado");
                             }                          
@@ -149,19 +151,33 @@ public class Trabalho {
         return u1;
     }
     
+    private void Comprar()
+    {
+        int opC = 99;
+        do{
+            opC = mn.MenuCompras();
 
-    /*
-    Usuário:
-    private long id;
-    private Pessoa pessoa;
-    private String login;
-    private String senha;
-    private LocalDateTime data_criacao;
-    private LocalDateTime data_modificacao; */
-
-    /*
-    Pessoa: 
-    private String nome;
-    private LocalDate nascimento;
-    private String documento; */
+            switch (opC) {
+                case 0:
+                    System.out.println("0 - Sair do programa");
+                    break;
+                case 1:
+                    System.out.println("1 - Mostrar Produtos\n\n");
+                    produtoDAO.mostrarTodos();
+                break;
+                case 2:
+                    System.out.println("2 - Comprar");
+                    produtoDAO.mostrarTodos();
+                break;
+                case 3:
+                    System.out.println("3 - Adcionar ao Carrinho");
+                    produtoDAO.mostrarTodos();
+                break;
+                default:
+                    System.out.println("Por favor, escolha uma opcao valida\n");
+                    break;
+            }
+        }while(opC!=0);
+            
+    }
 }

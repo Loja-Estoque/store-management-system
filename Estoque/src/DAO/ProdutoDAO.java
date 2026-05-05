@@ -34,6 +34,15 @@ public class ProdutoDAO {
         this.Adicionar(p3);
     }
     
+    public Produto buscarPorId(int id) {
+        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
+        for (int i = 0; i < ProximaPosicaoLivre; i++) {
+            if(produtos[i].getId() == id)
+                return produtos[i];
+        }
+        return null;
+    }
+    
     public boolean Adicionar(Produto p)
     {
         int ProximaPosicaoLivre = this.proximaPosicaoLivre();
