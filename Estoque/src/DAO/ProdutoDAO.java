@@ -89,4 +89,15 @@ public class ProdutoDAO {
         return false;
 
     }
+    
+    public boolean alterar(Produto produtoAtualizado) {
+        for (int i = 0; i < produtos.length; i++) {
+            // Verifica se a posição não é nula e se o ID é igual ao do produto atualizado
+            if (produtos[i] != null && produtos[i].getId() == produtoAtualizado.getId()) {
+                produtos[i] = produtoAtualizado; // Substitui o antigo pelo novo
+                return true;
+            }
+        }
+        return false; // Retorna falso se não encontrou o produto para alterar
+    }
 }

@@ -90,4 +90,14 @@ public class UsuarioDAO {
         return false;
 
     }
+    
+    public boolean alterar(Usuario usuarioAtualizado) {
+        for (int i = 0; i < usuarios.length; i++) {
+            if (usuarios[i] != null && usuarios[i].getId() == usuarioAtualizado.getId()) {
+                usuarios[i] = usuarioAtualizado;
+                return true;
+            }
+        }
+        return false;
+    }
 }

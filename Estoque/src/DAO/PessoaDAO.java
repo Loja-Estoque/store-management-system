@@ -67,5 +67,14 @@ public class PessoaDAO {
         }
     }
 
-   
+    public boolean alterar(Pessoa pessoaAtualizada) {
+        // Como PessoaDAO usa 'proximaPosicao', usamos ela no limite do for
+        for (int i = 0; i < proximaPosicao; i++) {
+            if (pessoa[i] != null && pessoa[i].getId() == pessoaAtualizada.getId()) {
+                pessoa[i] = pessoaAtualizada;
+                return true;
+            }
+        }
+        return false;
+    }
 }
