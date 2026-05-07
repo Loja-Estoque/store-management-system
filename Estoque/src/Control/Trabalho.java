@@ -21,6 +21,7 @@ import view.Menu;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import model.ItensPedido;
 import model.Pedido;
 
 
@@ -229,6 +230,8 @@ public class Trabalho {
         return pedido;
         
     }
+    
+    
 }
 
 /* private static long serial;
