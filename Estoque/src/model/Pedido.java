@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class Pedido {
     private static long serial;
     private long id;
-    private long id_usuario;
+    private Usuario usuario;
     private String status;  
     private double valor_total;
     private String forma_pagamento;
@@ -18,7 +18,6 @@ public class Pedido {
     
     public Pedido(long id_usuario, String status, double valor_total, String forma_pagamento, LocalDateTime data_criacao, LocalDateTime data_modificacao) {
         this.id = ++Pedido.serial;
-        this.id_usuario = id_usuario;
         this.status = status;
         this.valor_total = valor_total;
         this.forma_pagamento = forma_pagamento;
@@ -38,8 +37,8 @@ public class Pedido {
         return id;
     }
 
-    public long getId_usuario() {
-        return id_usuario;
+    public Usuario getId_usuario() {
+        return usuario;
     }
 
     public String getStatus() {
@@ -62,32 +61,29 @@ public class Pedido {
         return data_modificacao;
     }
 
-    public void setId_usuario(long id_usuario) {
-        this.id_usuario = id_usuario;
+    public void setId_usuario(Usuario u) {
+        this.usuario = u;
+        this.data_modificacao = LocalDateTime.now();
     }
 
     public void setStatus(String status) {
         this.status = status;
+        this.data_modificacao = LocalDateTime.now();
     }
 
     public void setValor_total(double valor_total) {
         this.valor_total = valor_total;
+        this.data_modificacao = LocalDateTime.now();
     }
 
     public void setForma_pagamento(String forma_pagamento) {
         this.forma_pagamento = forma_pagamento;
+        this.data_modificacao = LocalDateTime.now();
     }
 
-    public void setData_criacao(LocalDateTime data_criacao) {
-        this.data_criacao = data_criacao;
-    }
-
-    public void setData_modificacao(LocalDateTime data_modificacao) {
-        this.data_modificacao = data_modificacao;
-    }
 
     @Override
     public String toString() {
-        return "Pedido{" + "id=" + id + ", id_usuario=" + id_usuario + ", status=" + status + ", valor_total=" + valor_total + ", forma_pagamento=" + forma_pagamento + ", data_criacao=" + data_criacao + ", data_modificacao=" + data_modificacao + '}';
+        return "Pedido{" + "id=" + id + ", Usuario:" + usuario.getLogin() + ", status=" + status + ", valor_total=" + valor_total + ", forma_pagamento=" + forma_pagamento + '}';
     }
 }

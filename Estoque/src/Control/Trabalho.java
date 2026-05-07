@@ -9,6 +9,7 @@ import DAO.PessoaDAO;
 import DAO.ProdutoDAO;
 import DAO.UsuarioDAO;
 import DAO.MovimentacaoEstoqueDAO;
+import DAO.PedidoDAO;
 
 import model.Pessoa;
 import model.Produto;
@@ -20,6 +21,7 @@ import view.Menu;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import model.Pedido;
 
 
 
@@ -37,6 +39,7 @@ public class Trabalho {
     private UsuarioDAO usuarioDAO = new UsuarioDAO(pessoaDAO);
     private ProdutoDAO produtoDAO = new ProdutoDAO();
     private MovimentacaoEstoqueDAO MovimentacaoDAO = new MovimentacaoEstoqueDAO(produtoDAO);
+    private PedidoDAO pedidoDAO = new PedidoDAO();
     
     Scanner scanner = new Scanner(System.in);
         
@@ -69,7 +72,7 @@ public class Trabalho {
                             {
                                 System.out.println("Usuario comum logado");
                                 op1 =0;
-                                Comprar();
+                                Comprar(logado);
                                 
                             }                        
                             
@@ -158,13 +161,16 @@ public class Trabalho {
         return u1;
     }
     
-    private void Comprar()
+    private void Comprar(Usuario u)
     {
         int opC = 99;
         do{
-            opC = mn.MenuCompras();
-
+            
+                produtoDAO.mostrarCompra();
+                opC = mn.MenuCompras();
+                System.out.println("Digite sua opcao: ");
             switch (opC) {
+
                 case 0:
                     System.out.println("0 - Sair do programa");
                     break;
@@ -173,10 +179,9 @@ public class Trabalho {
                     produtoDAO.mostrarTodos();
                 break;
                 case 2:
-                    System.out.println("2 - Comprar");
-                    System.out.println("Qual quantidade deseja comprar?");
+                    System.out.println("Qual item deseja comprar?");
                     produtoDAO.mostrarCompra();
-                    System.out.println("Digite sua opcao: ");
+                    
                     int opP = Integer.parseInt(scanner.nextLine());
                     
                     int id = opP;
@@ -185,7 +190,15 @@ public class Trabalho {
                     int qnt = Integer.parseInt(scanner.nextLine());
                     
                     if(MovimentacaoDAO.registrarSaida(temp, qnt)){
+                        Pedido tempP = this.CriarPedido(u, qnt, temp);
+                        if(pedidoDAO.adicionar(tempP)){
+                            System.out.println("Pedido realizado com sucesso");
+                        } else{
+                            System.out.println("Erro, não foi possível realizar seu pedido");
+                        }
+                        
                         System.out.println("Venda Realizada com sucesso");
+                        
                     } else{
                         System.out.println("Quantidade muito alta para o produto" + temp.getNome());
                     }
@@ -203,52 +216,26 @@ public class Trabalho {
         }while(opC!=0);
             
     }
+    
+    public Pedido CriarPedido(Usuario u, double quantidade, Produto p)
+    {
+        Pedido pedido = new Pedido();
+        pedido.setId_usuario(u);
+        pedido.setStatus("CRIADO");
+        pedido.setValor_total(p.getPreco_venda() * quantidade);
+        System.out.println("Qual será a forma de pagamento");
+        pedido.setForma_pagamento(scanner.nextLine());
+        
+        return pedido;
+        
+    }
 }
 
-/*Comprar:
-
-do{
-Mostrar os produtos
-Sout("Qual produto deseja comprar?");
-
-for(int i=0; i<p.lenght; i++){
-	if(produto[i] != null){
-   	  sout(i+1 + " - " + produto[i].GetNome());
-	}
-}
-
- op = Integrer.ParseInt(scanner.NextLine());
-
-id = op -1;
-Produto temp = produtoDAO.BuscaPorId(id);
-
-Sout("Qual a quantidade?");
-int qnt = Integrer.ParseInt(scanner.NextLine());
-EstoqueProduto = MovimentaçãoDAO.BuscarPorProduto(temp);
-if(EstoqueProduto.DiminuirEstoque(qnt))
-{
-	Sout("1 - Comprar agora"); // Cria o Pedido
-	Sout("2 - Adicionar ao carrinho");//Cria o Carrinho e Itens Carrinho e Pedido
-	Sout("3 - Cancelar a compra"); // Desfaz o Diminuir quantidade do Diminuir estoque
-	Sout("Como deseja prosseguir: ");
-	int opCm = Integrer.ParseInt(scanner.NextLine());
-	
-	
-} else{
-	Sout("Quantidade muito alta, temos apenas" + EstoqueProduto.GetQuantidade());
-}
-
-
-}while(op=!0);
-
-//Dentro da MovimentaçãoDAO
-Public boolean DiminuirEstoque(int qnt){
-if(qnt <= this.quantidade){
-	set.quantidade -= qnt;
-	Status = "Modificado";
-	return true;
-} else{
-	return false;
-}
-
-}*/
+/* private static long serial;
+    private long id;
+    private long id_usuario;
+    private String status;  
+    private double valor_total;
+    private String forma_pagamento;
+    private LocalDateTime data_criacao;
+    private LocalDateTime data_modificacao;*/
