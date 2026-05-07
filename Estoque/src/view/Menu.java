@@ -88,7 +88,7 @@ public class Menu {
     public int MenuCompras()
     {
         StringBuilder builder = new StringBuilder("");
-        builder.append("Qual Item deseja alterar?\n");
+        builder.append("Sistema de compras\n");
         builder.append("0 - Para sair do programa\n");
         builder.append("1 - Mostrar Produtos\n");
         builder.append("2 - Comprar\n");

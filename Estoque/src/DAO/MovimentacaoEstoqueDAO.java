@@ -7,6 +7,8 @@ package DAO;
 import model.MovimentacaoEstoque;
 import model.Produto;
 
+import DAO.ProdutoDAO;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 /**
@@ -100,4 +102,41 @@ public class MovimentacaoEstoqueDAO {
         }
         return false;
     }
+    
+    public int consultarSaldo(Produto p) {
+    int saldo = 0;
+    for (int i = 0; i < Me.length; i++) {
+      
+        if (Me[i] != null && Me[i].getProduto().equals(p)) {
+            
+            // Lógica de soma e subtração baseada no tipo
+            if (Me[i].getTipo().equalsIgnoreCase("ENTRADA")) {
+                saldo += Me[i].getQuantidade();
+            } else if (Me[i].getTipo().equalsIgnoreCase("SAIDA")) {
+                saldo -= Me[i].getQuantidade();
+            }
+            
+        }
+    }
+    return saldo;
+}
+    
+   public boolean registrarSaida(Produto p, int qtdVendida) {
+    // 1. Verificar se há saldo disponível antes de diminuir
+        int saldoAtual = this.consultarSaldo(p);
+
+        if(qtdVendida <= saldoAtual)
+        {
+            MovimentacaoEstoque novaSaida = new MovimentacaoEstoque();
+            novaSaida.setProduto(p);
+            novaSaida.setQuantidade(qtdVendida);
+            novaSaida.setTipo("SAIDA");
+            novaSaida.setValor_unitario(p.getPreco_venda());
+
+            return this.Adicionar(novaSaida);
+        }
+        else{
+            return false; // Não há estoque suficiente
+        }
+    }   
 }

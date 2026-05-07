@@ -82,6 +82,6 @@ public class MovimentacaoEstoque {
 
     @Override
     public String toString() {
-        return "MovimentacaoEstoque{" + "id=" + id + ", id_produto=" + produto + ", quantidade=" + quantidade + ", tipo=" + tipo + ", valor_unitario=" + valor_unitario + ", data_criacao=" + data_criacao + ", data_modificacao=" + data_modificacao + '}';
+        return "MovimentacaoEstoque id=" + id + "\n id_produto=\n" + produto + "\n quantidade:" + quantidade + "\n tipo:" + tipo + "\n valor_unitario:" + valor_unitario;
     }
 }

@@ -8,12 +8,20 @@ package Control;
 import DAO.PessoaDAO;
 import DAO.ProdutoDAO;
 import DAO.UsuarioDAO;
+import DAO.MovimentacaoEstoqueDAO;
+
 import model.Pessoa;
+import model.Produto;
+import model.MovimentacaoEstoque;
+import model.Usuario;
+
+import view.Menu;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
-import model.Usuario;
-import view.Menu;
+
+
 
 /**
  *
@@ -28,6 +36,7 @@ public class Trabalho {
     private PessoaDAO pessoaDAO = new PessoaDAO();
     private UsuarioDAO usuarioDAO = new UsuarioDAO(pessoaDAO);
     private ProdutoDAO produtoDAO = new ProdutoDAO();
+    private MovimentacaoEstoqueDAO MovimentacaoDAO = new MovimentacaoEstoqueDAO(produtoDAO);
     
     Scanner scanner = new Scanner(System.in);
         
@@ -56,15 +65,13 @@ public class Trabalho {
                             {
                                 System.out.println("Usuario Administrador logado");
                                 System.out.println("Prox Menu");
-                            } else if(logado.getLogin() == "Comum")
+                            } else
                             {
                                 System.out.println("Usuario comum logado");
                                 op1 =0;
                                 Comprar();
                                 
-                            } else{
-                                System.out.println("Usuario Logado");
-                            }                          
+                            }                        
                             
                             //loop adm ou comum
                         } else {
@@ -167,13 +174,23 @@ public class Trabalho {
                 break;
                 case 2:
                     System.out.println("2 - Comprar");
-                    //qual item deseja comprar
-                    //quantidade de itens que irá comprar
-                    //mais algum item? repete se sim
-                    //algum cupom de desconto?
-                    //se sim, aplicar cupom
-                    //abaixar o estoque
-                    produtoDAO.mostrarTodos();
+                    System.out.println("Qual quantidade deseja comprar?");
+                    produtoDAO.mostrarCompra();
+                    System.out.println("Digite sua opcao: ");
+                    int opP = Integer.parseInt(scanner.nextLine());
+                    
+                    int id = opP;
+                    Produto temp = produtoDAO.buscarPorId(id);
+                    System.out.println("Qual quantidade: ");
+                    int qnt = Integer.parseInt(scanner.nextLine());
+                    
+                    if(MovimentacaoDAO.registrarSaida(temp, qnt)){
+                        System.out.println("Venda Realizada com sucesso");
+                    } else{
+                        System.out.println("Quantidade muito alta para o produto" + temp.getNome());
+                    }
+                    
+                    
                 break;
                 case 3:
                     System.out.println("3 - Adcionar ao Carrinho");
@@ -187,3 +204,51 @@ public class Trabalho {
             
     }
 }
+
+/*Comprar:
+
+do{
+Mostrar os produtos
+Sout("Qual produto deseja comprar?");
+
+for(int i=0; i<p.lenght; i++){
+	if(produto[i] != null){
+   	  sout(i+1 + " - " + produto[i].GetNome());
+	}
+}
+
+ op = Integrer.ParseInt(scanner.NextLine());
+
+id = op -1;
+Produto temp = produtoDAO.BuscaPorId(id);
+
+Sout("Qual a quantidade?");
+int qnt = Integrer.ParseInt(scanner.NextLine());
+EstoqueProduto = MovimentaçãoDAO.BuscarPorProduto(temp);
+if(EstoqueProduto.DiminuirEstoque(qnt))
+{
+	Sout("1 - Comprar agora"); // Cria o Pedido
+	Sout("2 - Adicionar ao carrinho");//Cria o Carrinho e Itens Carrinho e Pedido
+	Sout("3 - Cancelar a compra"); // Desfaz o Diminuir quantidade do Diminuir estoque
+	Sout("Como deseja prosseguir: ");
+	int opCm = Integrer.ParseInt(scanner.NextLine());
+	
+	
+} else{
+	Sout("Quantidade muito alta, temos apenas" + EstoqueProduto.GetQuantidade());
+}
+
+
+}while(op=!0);
+
+//Dentro da MovimentaçãoDAO
+Public boolean DiminuirEstoque(int qnt){
+if(qnt <= this.quantidade){
+	set.quantidade -= qnt;
+	Status = "Modificado";
+	return true;
+} else{
+	return false;
+}
+
+}*/

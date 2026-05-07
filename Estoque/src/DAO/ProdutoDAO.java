@@ -79,6 +79,20 @@ public class ProdutoDAO {
         }
     }
     
+    public void mostrarCompra() {
+        boolean temProdutos = false;
+        for (Produto p : produtos) {
+            if (p != null) {
+                System.out.println(p.getId() +" - " + p.getNome());
+                temProdutos = true;
+            }
+        }
+        if (!temProdutos) {
+            System.out.println("nao existe Produto cadastrado");
+        }
+    }
+    
+    
     public boolean remover(String nome) {
         for (int i = 0; i < produtos.length; i++) {
             if (produtos[i] != null && produtos[i].getNome().equals(nome)) {
