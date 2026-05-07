@@ -7,9 +7,10 @@ package model;
 import java.time.LocalDateTime;
 
 public class ItensPedido {
+    private static long serial;
     private long id;
-    private long id_pedido;
-    private long id_produto;
+    private Pedido pedido;
+    private Produto produto;
     private int quantidade;
     private double preco_unitario;
     private int subtotal;
@@ -18,25 +19,31 @@ public class ItensPedido {
     
     public ItensPedido(long id, long id_pedido, long id_produto, int quantidade, double preco_unitario, int subtotal, LocalDateTime data_criacao, LocalDateTime data_modificacao) {
         this.id = id;
-        this.id_pedido = id_pedido;
-        this.id_produto = id_produto;
         this.quantidade = quantidade;
         this.preco_unitario = preco_unitario;
         this.subtotal = subtotal;
         this.data_criacao = data_criacao;
         this.data_modificacao = data_modificacao;
     }
+    
+    public ItensPedido()
+    {
+         this.id = ++ItensPedido.serial;
+        
+        this.data_criacao = LocalDateTime.now();
+        this.data_modificacao = LocalDateTime.now();
+    }
 
     public long getId() {
         return id;
     }
 
-    public long getId_pedido() {
-        return id_pedido;
+    public Pedido get_pedido() {
+        return pedido;
     }
 
-    public long getId_produto() {
-        return id_produto;
+    public Produto get_produto() {
+        return produto;
     }
 
     public int getQuantidade() {
@@ -63,12 +70,12 @@ public class ItensPedido {
         this.id = id;
     }
 
-    public void setId_pedido(long id_pedido) {
-        this.id_pedido = id_pedido;
+    public void setId_pedido(Pedido pedido) {
+        this.pedido = pedido;
     }
 
-    public void setId_produto(long id_produto) {
-        this.id_produto = id_produto;
+    public void setId_produto(Produto produto) {
+        this.produto = produto;
     }
 
     public void setQuantidade(int quantidade) {
@@ -93,6 +100,6 @@ public class ItensPedido {
 
     @Override
     public String toString() {
-        return "ItensPedido{" + "id=" + id + ", id_pedido=" + id_pedido + ", id_produto=" + id_produto + ", quantidade=" + quantidade + ", preco_unitario=" + preco_unitario + ", subtotal=" + subtotal + ", data_criacao=" + data_criacao + ", data_modificacao=" + data_modificacao + '}';
+        return "ItensPedido{" + "id=" + id + ", id_pedido=" + pedido + ", id_produto=" + produto + ", quantidade=" + quantidade + ", preco_unitario=" + preco_unitario + ", subtotal=" + subtotal + ", data_criacao=" + data_criacao + ", data_modificacao=" + data_modificacao + '}';
     }
 }
