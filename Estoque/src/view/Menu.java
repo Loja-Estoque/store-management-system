@@ -18,7 +18,8 @@ public class Menu {
     Scanner scanner = new Scanner(System.in);
     public int Menu1()
     {
-        StringBuilder builder = new StringBuilder("");
+        
+        /*StringBuilder builder = new StringBuilder("");
         builder.append("SEJA BEM VINDO AO NOSSO PROGRAMA\n\n");
         builder.append("LISTA DE PRODUTOS CADASTRADOS\n");
         builder.append("--------------------------------\n");
@@ -28,8 +29,16 @@ public class Menu {
         builder.append("3 - Mostrar produtos\n");
         builder.append("4 - Mostrar Usuarios\n");
         builder.append("5 - Mostrar Pessoas\n");
-        builder.append("Qual opcao deseja: ");
+        builder.append("Qual opcao deseja: ");*/
 
+        StringBuilder builder = new StringBuilder("");
+        builder.append("SEJA BEM VINDO AO NOSSO PROGRAMA\n\n");
+        builder.append("--------------------------------\n");
+        builder.append("0 - Para sair do programa\n");
+        builder.append("1 - Fazer login\n");
+        builder.append("2 - Cadastrar Usuario\n");
+        builder.append("3 - Mostrar produtos\n");
+        builder.append("Qual opcao deseja: ");
         System.out.println(builder.toString());
 
         return Integer.parseInt(scanner.nextLine());
@@ -38,7 +47,8 @@ public class Menu {
     public int MenuAdm()
     {
         StringBuilder builder = new StringBuilder("");
-        builder.append("Qual Item deseja?\n");
+        builder.append("BEM VINDO À ÁREA ADMINISTRATIVA!\n\n");
+        builder.append("--------------------------------\n");
         builder.append("0 - Para sair do programa\n");
         builder.append("1 - Usuários\n");
         builder.append("2 - Pessoas\n");
@@ -72,13 +82,13 @@ public class Menu {
     public int MenuCliente()
     {
         StringBuilder builder = new StringBuilder("");
-        builder.append("Qual Item deseja alterar?\n");
+        //builder.append("Qual Item deseja alterar?\n");
         builder.append("0 - Para sair do programa\n");
-        builder.append("1 - Produtos\n");
-        builder.append("2 - Carrinho\n");
-        builder.append("3 - Pedidos\n");
-        builder.append("4 - Cupom\n");
-        builder.append("5 - Seu Usuário\n");
+        builder.append("1 - Comprar Produtos\n");
+        builder.append("2 - Meu Carrinho\n");
+        builder.append("3 - Meus Pedidos\n");
+        builder.append("4 - Cupons\n");
+        builder.append("5 - Meu Usuário\n");
         builder.append("Qual opcao deseja: ");
         
         System.out.println(builder.toString());

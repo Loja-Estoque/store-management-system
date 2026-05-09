@@ -65,15 +65,29 @@ public class Trabalho {
                         
                         if(logado != null){
                             
-                            if(logado.getLogin() == "Administrador")
+                            if ("Administrador".equals(logado.getLogin()))
                             {
                                 System.out.println("Usuario Administrador logado");
-                                System.out.println("Prox Menu");
+                                //System.out.println("Prox Menu");
+                                int assunto = -1;
+                                
+                                while(assunto != 0){
+                                    assunto = mn.MenuAdm();
+                                    
+                                    if(assunto != 0) {
+                                        int acao = mn.MenuAdm1();
+                                        
+                                        if(acao != 0) {
+                                            this.executarAcao(assunto, acao);
+                                        }
+                                    }
+                                }
                             } else
                             {
                                 System.out.println("Usuario comum logado");
                                 op1 =0;
-                                Comprar(logado);
+                                //Comprar(logado);
+                                mn.MenuCliente();
                                 
                             }                        
                             
@@ -104,12 +118,12 @@ public class Trabalho {
                         produtoDAO.mostrarTodos();
                         break;
                         
-                    case 4:
+                    /*case 4:
                         usuarioDAO.mostrarTodos();
                         break;
                     case 5:
                         pessoaDAO.mostrarTodos();
-                        break;
+                        break;*/
                     default:
                         System.out.println("Por favor, escolha uma opcao valida\n");
                         break;
@@ -131,13 +145,13 @@ public class Trabalho {
         System.out.println("Informe seu nome: ");
         p.setNome(scanner.nextLine());
         System.out.println("Informe seu documento: ");
-         p.setDocumento(scanner.nextLine());
+        p.setDocumento(scanner.nextLine());
          
-        System.out.println("Informe sua data de nascimento (dd/mm/aa): ");
+        System.out.println("Informe sua data de nascimento (dd/mm/aaaa): ");
         String nascimento = scanner.nextLine();
 
         // trasformando string em local date
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         LocalDate birthday = LocalDate.parse(nascimento, dtf);      
         //criando pessoa;
@@ -160,6 +174,30 @@ public class Trabalho {
         u1.setSenha(scanner.nextLine());
          
         return u1;
+    }
+    
+    private void executarAcao(int assunto, int acao) {
+        if (assunto == 3) { // Produtos
+            switch (acao) {
+                case 1: 
+                    // Chama seu método de criar produto que está na Trabalho
+                    break;
+                case 2:
+                    produtoDAO.mostrarTodos();
+                    break;
+            }
+        }
+        
+        if (assunto == 4) { // Produtos
+            switch (acao) {
+                case 1: 
+                    // Chama seu método de criar produto que está na Trabalho
+                    break;
+                case 2:
+                    produtoDAO.mostrarTodos();
+                    break;
+            }
+        }
     }
     
     private void Comprar(Usuario u)
