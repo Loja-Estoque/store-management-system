@@ -5,6 +5,7 @@
 package Control;
 
 
+import DAO.EntregaDAO;
 import DAO.PessoaDAO;
 import DAO.ProdutoDAO;
 import DAO.UsuarioDAO;
@@ -15,8 +16,11 @@ import model.Pessoa;
 import model.Produto;
 import model.MovimentacaoEstoque;
 import model.Usuario;
+import model.Entrega;
 
 import view.Menu;
+
+import Util.Util;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -41,6 +45,7 @@ public class Trabalho {
     private ProdutoDAO produtoDAO = new ProdutoDAO();
     private MovimentacaoEstoqueDAO MovimentacaoDAO = new MovimentacaoEstoqueDAO(produtoDAO);
     private PedidoDAO pedidoDAO = new PedidoDAO();
+    private EntregaDAO entregaDAO = new EntregaDAO();
     
     Scanner scanner = new Scanner(System.in);
         
@@ -68,6 +73,7 @@ public class Trabalho {
                             if ("Administrador".equals(logado.getLogin()))
                             {
                                 System.out.println("Usuario Administrador logado");
+
                                 //System.out.println("Prox Menu");
                                 int assunto = -1;
                                 
@@ -88,8 +94,9 @@ public class Trabalho {
                                 op1 =0;
                                 //Comprar(logado);
                                 mn.MenuCliente();
-                                
-                            }                        
+
+                                //int opADM = mn.MenuAdm();  
+                            }                      
                             
                             //loop adm ou comum
                         } else {
@@ -196,6 +203,21 @@ public class Trabalho {
                 case 2:
                     produtoDAO.mostrarTodos();
                     break;
+             
+                case 8:
+                    System.out.println("Data atual do sistema: " + Util.getAgora());
+                    System.out.println("Quantos dias deseja avançar no tempo?");
+                    int dias = Integer.parseInt(scanner.nextLine());
+
+                    Util.avancarDias(dias);
+
+                    // Após avançar o tempo, rodamos a verificação de status
+                    entregaDAO.AtualizarStatus();
+
+                    System.out.println("O tempo passou... Nova data: " + Util.getAgora());
+                    break;
+                default:
+                    throw new AssertionError();
             }
         }
     }

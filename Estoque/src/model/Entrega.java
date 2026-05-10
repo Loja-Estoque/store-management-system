@@ -1,4 +1,4 @@
-/*
+   /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Entrega {
     private static long serial;
     private long id;
-    private long id_pedido;
+    private Pedido pedido;
     private String status;
     private String transportadora;
     private String codigo_rastreio;
@@ -19,7 +19,7 @@ public class Entrega {
     private LocalDateTime data_criacao;
     private LocalDateTime data_modificacao;
 
-    public Entrega(long id_pedido, String status, String transportadora, String codigo_rastreio, LocalDate data_envio, LocalDate data_entrega, LocalDateTime data_criacao, LocalDateTime data_modificacao) {
+    /*public Entrega(long id_pedido, String status, String transportadora, String codigo_rastreio, LocalDate data_envio, LocalDate data_entrega, LocalDateTime data_criacao, LocalDateTime data_modificacao) {
         this.id = ++Entrega.serial;
         this.id_pedido = id_pedido;
         this.status = status;
@@ -29,14 +29,22 @@ public class Entrega {
         this.data_entrega = data_entrega;
         this.data_criacao = data_criacao;
         this.data_modificacao = data_modificacao;
+    }*/
+    
+    public Entrega(Pedido p)
+    {
+        this.id = ++Entrega.serial;
+        
+        this.data_criacao = LocalDateTime.now();
+        this.data_modificacao = LocalDateTime.now();
     }
 
     public long getId() {
         return id;
     }
 
-    public long getId_pedido() {
-        return id_pedido;
+    public Pedido getPedido() {
+        return pedido;
     }
 
     public String getStatus() {
@@ -67,8 +75,8 @@ public class Entrega {
         return data_modificacao;
     }
 
-    public void setId_pedido(long id_pedido) {
-        this.id_pedido = id_pedido;
+    public void setId_pedido(Pedido pedido) {
+        this.pedido = pedido;
     }
 
     public void setStatus(String status) {
@@ -97,6 +105,12 @@ public class Entrega {
 
     public void setData_modificacao(LocalDateTime data_modificacao) {
         this.data_modificacao = data_modificacao;
+    }
+    
+    
+    @Override
+    public String toString() {
+        return "Entrega{" + "id=" + id + "id do Pedido" + pedido.getId()+ ", status=" + status + ", transportadora=" + transportadora + ", codigo_rastreio=" + codigo_rastreio + ", data_envio=" + data_envio + ", data_entrega=" + data_entrega + ", data_modificacao=" + data_modificacao + '}';
     }
     
     
