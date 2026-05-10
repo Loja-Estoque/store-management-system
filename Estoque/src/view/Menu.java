@@ -64,17 +64,23 @@ public class Menu {
         return Integer.parseInt(scanner.nextLine());
     }
     
-    public int MenuAdm1()
+    public int MenuAdm1(int assunto)
     {
         StringBuilder builder = new StringBuilder("");
-        builder.append("Qual Item deseja alterar?\n");
-        builder.append("0 - Para sair do programa\n");
-        builder.append("1 - Criar\n");
-        builder.append("2 - Mostrar Relatório\n");
-        builder.append("3 - Alterar\n");
-        builder.append("4 - Deletar\n");
+        if (assunto == 8) { // Menu especial para Calendário
+            builder.append("CONFIGURAÇÃO DE CALENDÁRIO\n");
+            builder.append("0 - Voltar\n");
+            builder.append("1 - Ver data atual\n");
+            builder.append("2 - Avançar dias\n");
+        } else {
+            builder.append("Qual Item deseja alterar?\n");
+            builder.append("0 - Para sair do programa\n");
+            builder.append("1 - Criar\n");
+            builder.append("2 - Alterar\n");
+            builder.append("3 - Deletar\n");
+            builder.append("4 - Mostrar Relatório\n");
+        }
         builder.append("Qual opcao deseja: ");
-        
         System.out.println(builder.toString());
         return Integer.parseInt(scanner.nextLine());
     }

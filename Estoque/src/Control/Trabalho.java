@@ -25,6 +25,7 @@ import Util.Util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import model.Cupom;
 import model.ItensPedido;
 import model.Pedido;
 
@@ -81,7 +82,7 @@ public class Trabalho {
                                     assunto = mn.MenuAdm();
                                     
                                     if(assunto != 0) {
-                                        int acao = mn.MenuAdm1();
+                                        int acao = mn.MenuAdm1(assunto);
                                         
                                         if(acao != 0) {
                                             this.executarAcao(assunto, acao);
@@ -125,12 +126,6 @@ public class Trabalho {
                         produtoDAO.mostrarTodos();
                         break;
                         
-                    /*case 4:
-                        usuarioDAO.mostrarTodos();
-                        break;
-                    case 5:
-                        pessoaDAO.mostrarTodos();
-                        break;*/
                     default:
                         System.out.println("Por favor, escolha uma opcao valida\n");
                         break;
@@ -184,27 +179,223 @@ public class Trabalho {
     }
     
     private void executarAcao(int assunto, int acao) {
-        if (assunto == 3) { // Produtos
+        if (assunto == 1) { // Usuários
             switch (acao) {
-                case 1: 
-                    // Chama seu método de criar produto que está na Trabalho
+                case 1: //criar
+                    Pessoa p = criaPessoa();
+                    pessoaDAO.adicionar(p);
+                    
+                    Usuario u = criaUsuario(criaPessoa());
+                    usuarioDAO.Adicionar(u);
+                    
+                    System.out.println("Usuário criado com sucesso!");
+                    break;
+                case 2: //alterar
+                    System.out.println("Digite o Login e Senha do usuário que deseja alterar:");
+                    String loginA = scanner.nextLine(); 
+                    String senhaA = scanner.nextLine();
+                    
+                    Usuario usuarioExistente = usuarioDAO.buscaUsuarioLogin(loginA, senhaA);
+                    
+                    if (usuarioExistente != null) {
+                        System.out.println("Informe o NOVO login: ");
+                        String novoLogin = scanner.nextLine();
+                        System.out.println("Informe a NOVA senha: ");
+                        String novaSenha = scanner.nextLine();
+                        
+                        usuarioExistente.setLogin(novoLogin);
+                        usuarioExistente.setSenha(novaSenha);
+                        
+                        if(usuarioDAO.alterar(usuarioExistente)) {
+                            System.out.println("Usuário removido com sucesso!");
+                        } else {
+                            System.out.println("Erro ao salvar alterações.");
+                        }
+                    } else {
+                        System.out.println("Usuário não encontrado.");
+                    }
+                    break;
+                case 3: //deletar
+                    System.out.println("Digite o Login do usuário que deseja remover:");
+                    String login = scanner.nextLine(); 
+
+                    if(usuarioDAO.remover(login)) {
+                        System.out.println("Usuário removido com sucesso!");
+                    } else {
+                        System.out.println("Usuário não encontrado.");
+                    }
+                    break;
+                case 4: //mostrar relatório
+                    System.out.println("--- RELATÓRIO GERAL DE USUARIOS ---\n\n");
+                    usuarioDAO.mostrarTodos();
+                    break;
+            }
+        }
+        
+        if (assunto == 2) { // Pessoas
+            switch (acao) {
+                case 1: //criar
+                    Pessoa p = criaPessoa();
+                    pessoaDAO.adicionar(p);
+                    System.out.println("Pessoa criada com sucesso!");
                     break;
                 case 2:
+                    System.out.println("Digite o documento da pessoa que deseja alterar:");
+                    String doc = scanner.nextLine();
+                    
+                    Pessoa pExistente = pessoaDAO.buscarDocumento(doc);
+                    if (pExistente != null) {
+                        System.out.println("Nome atual: " + pExistente.getNome());
+                        System.out.print("Informe o NOVO nome: ");
+                        pExistente.setNome(scanner.nextLine());
+                        
+                        if (pessoaDAO.alterar(pExistente)) {
+                            System.out.println("Dados da pessoa atualizados!");
+                        }
+                    } else {
+                        System.out.println("Pessoa não encontrada!");
+                    }
+                    break;
+                case 3:
+                    System.out.println("Digite o documento da pessoa que deseja remover:");
+                    String docD = scanner.nextLine();
+                    
+                    if (pessoaDAO.remove(docD)) {
+                        System.out.println("Pessoa removida com sucesso!");
+                    } else {
+                        System.out.println("Pessoa não encontrada!");
+                    }
+                    break;
+                case 4:
+                    System.out.println("--- RELATÓRIO GERAL DE PESSOAS ---\n\n");
+                    pessoaDAO.mostrarTodos();
+                    break;
+            }
+        }
+        
+        if (assunto == 3) { // Produtos
+            switch (acao) {
+                case 1: //criar
+                    Produto p = new Produto();
+                    System.out.println("Nome do produto: "); 
+                    p.setNome(scanner.nextLine());
+                    
+                    System.out.println("Preço: "); 
+                    p.setPreco_venda(Double.parseDouble(scanner.nextLine()));
+                    
+                    p.setData_criacao(Util.getAgora());
+                    p.setAtivo(true);
+                    produtoDAO.adicionar(p);
+                    break;
+                case 2: //alterar
+                    produtoDAO.mostrarTodos();
+                    System.out.println("Digite o id do produto que deseja alterar:");
+                    int idProd = Integer.parseInt(scanner.nextLine());
+                    Produto pExistente = produtoDAO.buscarPorId(idProd);
+                    if(pExistente != null){
+                        System.out.println("Informe o NOVO nome: "); 
+                        pExistente.setNome(scanner.nextLine());
+                        
+                        System.out.println("Informe o NOVA descricao: "); 
+                        pExistente.setDescricao(scanner.nextLine());
+                        
+                        System.out.println("Informe o NOVO preco: "); 
+                        pExistente.setPreco_venda(Double.parseDouble(scanner.nextLine()));
+                        
+                        System.out.println("O produto está ativo? (1 - Sim / 2 - Não): ");
+                        int opAtivo = Integer.parseInt(scanner.nextLine());
+                        pExistente.setAtivo(opAtivo == 1);
+                        
+                        if (produtoDAO.alterar(pExistente)) {
+                            System.out.println("Produto alterado com sucesso!");
+                        } else {
+                            System.out.println("Erro ao alterar produto.");
+                        }
+                    } else {
+                        System.out.println("Produto não encontrado!");
+                    }
+                    break;
+                case 3: //remover
+                    produtoDAO.mostrarTodos();
+                    System.out.println("Digite o nome do produto que deseja alterar:");
+                    String nomeP = scanner.nextLine();
+                    
+                    if (produtoDAO.remover(nomeP)) {
+                        System.out.println("Produto removido com sucesso!");
+                    } else {
+                        System.out.println("Produto não encontrado!");
+                    }
+                    break;
+                case 4:
+                    System.out.println("--- RELATÓRIO GERAL DE PRODUTOS ---\n\n");
                     produtoDAO.mostrarTodos();
                     break;
             }
         }
         
-        if (assunto == 4) { // Produtos
+        if (assunto == 4) { // Cupom
+            switch (acao) {
+                case 1: //criar
+                    
+                    break;
+                case 2: //alterar
+                    break;
+                case 3: //remover
+                    break;
+                case 4: //relatório
+                    //Cupom.mostrarTodos();
+                    break;
+            }
+        }
+        
+        if (assunto == 5) { // Pedido
+            switch (acao) {
+                case 1: 
+                    
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    produtoDAO.mostrarTodos();
+                    break;
+            }
+        }
+        
+        if (assunto == 6) { // Entrega
             switch (acao) {
                 case 1: 
                     // Chama seu método de criar produto que está na Trabalho
                     break;
                 case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
                     produtoDAO.mostrarTodos();
                     break;
-             
-                case 8:
+            }
+        }
+        
+        if (assunto == 7) { // Estoque
+            switch (acao) {
+                case 1: 
+                    // Chama seu método de criar produto que está na Trabalho
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    produtoDAO.mostrarTodos();
+                    break;
+            }
+        }
+        
+        if (assunto == 8) { // Calendário
+            switch (acao) {
+                case 1:
                     System.out.println("Data atual do sistema: " + Util.getAgora());
                     System.out.println("Quantos dias deseja avançar no tempo?");
                     int dias = Integer.parseInt(scanner.nextLine());
@@ -215,6 +406,9 @@ public class Trabalho {
                     entregaDAO.AtualizarStatus();
 
                     System.out.println("O tempo passou... Nova data: " + Util.getAgora());
+                    break;
+                case 2:
+                    System.out.println("Data atual: " + Util.getAgora());
                     break;
                 default:
                     throw new AssertionError();
