@@ -22,7 +22,7 @@ public class PessoaDAO {
         
         Pessoa Comum = new Pessoa();
         Comum.setNome("Comum");
-        Comum.setDocumento("87456123");
+        Comum.setDocumento("87654321");
         Comum.setNascimento(LocalDate.now());
         this.adicionar(Comum);
     }
@@ -38,9 +38,9 @@ public class PessoaDAO {
         }
     }
     
-    public Pessoa buscarPorId(int id) {
+    public Pessoa buscarDocumento(String documento) {
         for (int i = 0; i < proximaPosicao; i++) {
-            if(pessoa[i].getId() == id)
+            if(pessoa[i].getDocumento().equals(documento))
                 return pessoa[i];
         }
         return null;

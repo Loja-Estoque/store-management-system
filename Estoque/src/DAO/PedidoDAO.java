@@ -9,11 +9,22 @@ import model.Pedido;
 import Util.Util;
 
 public class PedidoDAO {
+
     private Pedido[] pedidos = new Pedido[5];
     private int proximaPosicao = 0;
-    
+
+    public Pedido buscarPorId(int id) {
+        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
+        for (int i = 0; i < ProximaPosicaoLivre; i++) {
+            if (pedidos[i].getId() == id) {
+                return pedidos[i];
+            }
+        }
+        return null;
+    }
+
     public boolean adicionar(Pedido p) {
-        if(proximaPosicao < pedidos.length){
+        if (proximaPosicao < pedidos.length) {
             pedidos[proximaPosicao] = p;
             proximaPosicao++;
             return true;
@@ -22,7 +33,7 @@ public class PedidoDAO {
             return false;
         }
     }
-    
+
     public void mostrarTodos() {
         boolean temPedido = false;
         for (int i = 0; i < proximaPosicao; i++) {
@@ -33,6 +44,25 @@ public class PedidoDAO {
             System.out.println("Nenhum pedido registrado.");
         }
     }
-    
-    
+
+    private int proximaPosicaoLivre() {
+        for (int i = 0; i < pedidos.length; i++) {
+            if (pedidos[i] == null) {
+                return i;
+            }
+
+        }
+        return -1;
+
+    }
+
+    public double calcularFaturamentoTotal() {
+        double total = 0;
+        for (int i = 0; i < proximaPosicao; i++) {
+            if (pedidos[i] != null && (!pedidos[i].getStatus().equals("CANCELADO") && !pedidos[i].getStatus().equals("CRIADO"))) {
+                total += pedidos[i].getValor_total();
+            }
+        }
+        return total;
+    }
 }

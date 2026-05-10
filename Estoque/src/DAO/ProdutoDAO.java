@@ -19,19 +19,19 @@ public class ProdutoDAO {
         p1.setNome("Pao Frances");
         p1.setDescricao("Pao pequeno quentinho");
         p1.setPreco_venda(0.50);
-        this.Adicionar(p1);
+        this.adicionar(p1);
         
         Produto p2 = new Produto();
         p2.setNome("Broa de milho");
         p2.setDescricao("Broa doce para deixar sua manha mais feliz");
         p2.setPreco_venda(0.60);
-        this.Adicionar(p2);
+        this.adicionar(p2);
         
         Produto p3 = new Produto();
         p3.setNome("Sonho");
         p3.setDescricao("Sonho recheado com doce de Leite, nem parece que acordou");
         p3.setPreco_venda(0.30);
-        this.Adicionar(p3);
+        this.adicionar(p3);
     }
     
     public Produto buscarPorId(int id) {
@@ -43,7 +43,7 @@ public class ProdutoDAO {
         return null;
     }
     
-    public boolean Adicionar(Produto p)
+    public boolean adicionar(Produto p)
     {
         int ProximaPosicaoLivre = this.proximaPosicaoLivre();
         if(ProximaPosicaoLivre != -1)

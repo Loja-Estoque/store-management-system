@@ -15,8 +15,8 @@ public class UsuarioDAO {
     private Usuario[] usuarios = new Usuario[5];
     
     public UsuarioDAO(PessoaDAO pessoaDAO){
-        Pessoa pAdm = pessoaDAO.buscarPorId(1);
-        Pessoa pCm = pessoaDAO.buscarPorId(2);
+        Pessoa pAdm = pessoaDAO.buscarDocumento("12345678");
+        Pessoa pCm = pessoaDAO.buscarDocumento("87654321");
         
         if(pAdm != null)
         {

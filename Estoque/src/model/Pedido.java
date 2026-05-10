@@ -93,6 +93,10 @@ public class Pedido {
 
     @Override
     public String toString() {
-        return "Pedido{" + "id=" + id + ", Usuario:" + usuario.getLogin() + ", status=" + status + ", valor_total=" + valor_total + ", forma_pagamento=" + forma_pagamento + '}';
+        return "Id do pedido: " + id 
+                + "\nUsuario: " + usuario.getLogin() 
+                + "\nStatus: " + status 
+                + "\nValor total: " + valor_total 
+                + "\nForma de pagamento: " + forma_pagamento;
     }
 }

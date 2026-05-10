@@ -84,6 +84,10 @@ public class Produto {
         this.preco_venda = preco_venda;
         this.data_modificacao = LocalDateTime.now();
     }
+    
+    public void setData_criacao(LocalDateTime data_criacao) {
+        this.data_criacao = data_criacao;
+    }
 
     
 
