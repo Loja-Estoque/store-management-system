@@ -11,6 +11,7 @@ import DAO.ProdutoDAO;
 import DAO.UsuarioDAO;
 import DAO.MovimentacaoEstoqueDAO;
 import DAO.PedidoDAO;
+import DAO.ItensPedidoDAO;
 import DAO.CarrinhoDAO;
 import DAO.ItensCarrinhoDAO;
 import DAO.CupomDAO;
@@ -53,6 +54,9 @@ public class Trabalho {
     private PedidoDAO pedidoDAO = new PedidoDAO();
     private EntregaDAO entregaDAO = new EntregaDAO();
     private CarrinhoDAO carrinhoDAO = new CarrinhoDAO();
+    private ItensCarrinhoDAO itensCarrinhoDAO = new ItensCarrinhoDAO();
+    private ItensPedidoDAO itensPedidoDAO = new ItensPedidoDAO();
+    private CupomDAO cupomDAO = new CupomDAO();
     
     private Carrinho carrinhoAtual = null;
     
@@ -257,23 +261,7 @@ public class Trabalho {
                     int id = opP;
                     Produto temp = produtoDAO.buscarPorId(id);
                     System.out.println("Qual quantidade: ");
-                    int qnt = Integer.parseInt(scanner.nextLine());
-                    
-                    if(MovimentacaoDAO.registrarSaida(temp, qnt)){
-                        Pedido tempP = this.CriarPedido(u, qnt, temp);
-                        if(pedidoDAO.adicionar(tempP)){
-                            System.out.println("Pedido realizado com sucesso");
-                        } else{
-                            System.out.println("Erro, não foi possível realizar seu pedido");
-                        }
-                        
-                        System.out.println("Venda Realizada com sucesso");
-                        
-                    } else{
-                        System.out.println("Quantidade muito alta para o produto" + temp.getNome());
-                    }
-                    
-                    
+                    int qnt = Integer.parseInt(scanner.nextLine());                    
                 break;
                 case 3:
                     System.out.println("3 - Adcionar ao Carrinho");
@@ -287,12 +275,12 @@ public class Trabalho {
             
     }
     
-    public Pedido CriarPedido(Usuario u, double quantidade, Produto p)
+    public Pedido CriarPedido(Usuario u, double quantidade, Produto p, double total)
     {
         Pedido pedido = new Pedido();
         pedido.setId_usuario(u);
         pedido.setStatus("CRIADO");
-        pedido.setValor_total(p.getPreco_venda() * quantidade);
+        pedido.setValor_total(total);
         System.out.println("Qual será a forma de pagamento");
         pedido.setForma_pagamento(scanner.nextLine());
         
@@ -300,8 +288,110 @@ public class Trabalho {
         
     }
     
+    private ItensPedido CriarItensPedido(Pedido pe, Produto po, int quantidade)
+    {
+        ItensPedido itenspe = new ItensPedido();
+        itenspe.setId_pedido(pe);
+        itenspe.setId_produto(po);
+        itenspe.setQuantidade(quantidade);
+        itenspe.setPreco_unitario(pe.getValor_total()/quantidade);
+        itenspe.setSubtotal(pe.getValor_total());
+        itensPedidoDAO.Adicionar(itenspe);
+        
+        return itenspe;
+    }
     
+    
+    
+    // Método para garantir que o usuário tenha um carrinho aberto
+        private void prepararCarrinho(Usuario logado) {
+            if (this.carrinhoAtual == null) {
+                this.carrinhoAtual = new Carrinho();
+                this.carrinhoAtual.setUsuario(logado);
+                this.carrinhoAtual.setStatus("ABERTO");
+                carrinhoDAO.Adicionar(carrinhoAtual);
+            }
+        }
+    
+        
+    public void FinalizarCompra(Produto temp, int qnt, Usuario u)
+    {
+        if(MovimentacaoDAO.registrarSaida(temp, qnt)){
+            Pedido novoPedido = new Pedido();
+            novoPedido.setId_usuario(u);
+            double total = temp.getPreco_venda() * qnt;
+            novoPedido.setStatus("CRIADO");
+            System.out.println("Quer adicionar algum cupom?");
+            System.out.println("0 - não");
+            System.out.println("1 - sim");
+            int pcupom = Integer.parseInt(scanner.nextLine());
+            LocalDate dataDeHojeNoSistema = Util.getAgora().toLocalDate();
+            if(pcupom == 1)
+            {
+                System.out.println("Insira o codigo do Cupom: ");
+                String cod = scanner.nextLine();
+                
+                 // 2. Aplicar Desconto (CUPOM)
+               
+                
+                Cupom cupom = cupomDAO.buscarPorCodigo(cod);
+                
+                if (cupom != null && total >= cupom.getValor_minimo_pedido() && cupom.getData_validade().isBefore(dataDeHojeNoSistema)) {
 
+                    if (cupom.getTipo_desconto().equals("FIXO")) {
+                        total -= cupom.getValor_desconto();
+                    } else {
+                        total -= (total * (cupom.getValor_desconto() / 100));
+                    }
+                    novoPedido.setCupom(cupom);
+                }               
+            }
+            novoPedido.setValor_total(total);
+            
+            System.out.println("Qual será a forma de pagamento");
+            novoPedido.setForma_pagamento(scanner.nextLine());
+            novoPedido.setStatus("PAGO");
+            
+            if(pedidoDAO.adicionar(novoPedido)){
+                System.out.println("Pedido realizado com sucesso");
+                ItensPedido tempIP = this.CriarItensPedido(novoPedido, temp, qnt);
+            } else{
+                System.out.println("Erro, não foi possível realizar seu pedido");
+            }
+                        
+            System.out.println("Venda Realizada com sucesso");
+            
+            
+                        
+        } else{
+            System.out.println("Quantidade muito alta para o produto" + temp.getNome());
+        }
+    }
+        
+    
+    public void finalizarCarrinho(Produto p, int qnt) {
+        
+        FinalizarCompra(p, qnt,carrinhoAtual.getUsuario());
+        
+           
+
+        
+
+        // 4. Fechar Carrinho
+        carrinhoAtual.setStatus("FECHADO");
+        this.carrinhoAtual = null; // Reseta para a próxima compra
+    }
+
+    private Entrega CriarEntrega(Pedido pe, LocalDate data)
+    {
+        Entrega e = new Entrega();
+        e.setId_pedido(pe);
+        e.setData_envio(data.plusDays(1));
+        e.setData_entrega(data.plusDays(2));
+        e.setTransportadora("Sedex");
+        e.setStatus("PREPARACAO");
+        return e;
+    }
     
 }
 

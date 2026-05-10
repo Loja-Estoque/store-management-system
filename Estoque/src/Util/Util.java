@@ -4,6 +4,7 @@
  */
 package Util;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -13,9 +14,11 @@ import java.time.LocalDateTime;
 public class Util {
     private static LocalDateTime dataAtual = LocalDateTime.now();
 
+
     public static LocalDateTime getAgora() {
         return dataAtual;
     }
+    
 
     public static void avancarDias(int dias) {
         dataAtual = dataAtual.plusDays(dias);

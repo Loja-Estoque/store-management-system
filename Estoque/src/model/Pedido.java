@@ -10,6 +10,7 @@ public class Pedido {
     private static long serial;
     private long id;
     private Usuario usuario;
+    private Cupom cupom;
     private String status;  
     private double valor_total;
     private String forma_pagamento;
@@ -61,6 +62,10 @@ public class Pedido {
         return data_modificacao;
     }
 
+    public Cupom getCupom() {
+        return cupom;
+    }
+
     public void setId_usuario(Usuario u) {
         this.usuario = u;
         this.data_modificacao = LocalDateTime.now();
@@ -74,6 +79,10 @@ public class Pedido {
     public void setValor_total(double valor_total) {
         this.valor_total = valor_total;
         this.data_modificacao = LocalDateTime.now();
+    }
+
+    public void setCupom(Cupom cupom) {
+        this.cupom = cupom;
     }
 
     public void setForma_pagamento(String forma_pagamento) {

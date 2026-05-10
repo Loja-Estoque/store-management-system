@@ -28,6 +28,14 @@ public class Cupom {
         this.data_criacao = data_criacao;
         this.data_modificacao = data_modificacao;
     }
+    
+    public Cupom()
+    {
+        this.id = ++Cupom.serial;
+        
+        this.data_criacao = LocalDateTime.now();
+        this.data_modificacao = LocalDateTime.now();
+    }
 
     public long getId() {
         return id;
@@ -67,27 +75,27 @@ public class Cupom {
 
     public void setTipo_desconto(String tipo_desconto) {
         this.tipo_desconto = tipo_desconto;
+        this.data_modificacao = LocalDateTime.now();
     }
 
     public void setValor_desconto(double valor_desconto) {
         this.valor_desconto = valor_desconto;
+        this.data_modificacao = LocalDateTime.now();
     }
 
     public void setValor_minimo_pedido(double valor_minimo_pedido) {
         this.valor_minimo_pedido = valor_minimo_pedido;
+        this.data_modificacao = LocalDateTime.now();
     }
 
     public void setData_validade(LocalDate data_validade) {
         this.data_validade = data_validade;
+        this.data_modificacao = LocalDateTime.now();
     }
 
-    public void setData_criacao(LocalDateTime data_criacao) {
-        this.data_criacao = data_criacao;
-    }
 
-    public void setData_modificacao(LocalDateTime data_modificacao) {
-        this.data_modificacao = data_modificacao;
-    }
+
+
 
     @Override
     public String toString() {

@@ -31,7 +31,7 @@ public class Entrega {
         this.data_modificacao = data_modificacao;
     }*/
     
-    public Entrega(Pedido p)
+    public Entrega()
     {
         this.id = ++Entrega.serial;
         

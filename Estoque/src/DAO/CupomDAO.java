@@ -22,6 +22,15 @@ public class CupomDAO {
         return null;
     }
     
+    public Cupom buscarPorCodigo(String Codigo) {
+        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
+        for (int i = 0; i < ProximaPosicaoLivre; i++) {
+            if(cupom[i].getCodigo() == Codigo)
+                return cupom[i];
+        }
+        return null;
+    }
+    
     public boolean Adicionar(Cupom c)
     {
         int ProximaPosicaoLivre = this.proximaPosicaoLivre();

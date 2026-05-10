@@ -13,11 +13,11 @@ public class ItensPedido {
     private Produto produto;
     private int quantidade;
     private double preco_unitario;
-    private int subtotal;
+    private double subtotal;
     private LocalDateTime data_criacao;
     private LocalDateTime data_modificacao;
     
-    public ItensPedido(long id, long id_pedido, long id_produto, int quantidade, double preco_unitario, int subtotal, LocalDateTime data_criacao, LocalDateTime data_modificacao) {
+    public ItensPedido(long id, long id_pedido, long id_produto, int quantidade, double preco_unitario, double subtotal, LocalDateTime data_criacao, LocalDateTime data_modificacao) {
         this.id = id;
         this.quantidade = quantidade;
         this.preco_unitario = preco_unitario;
@@ -54,7 +54,7 @@ public class ItensPedido {
         return preco_unitario;
     }
 
-    public int getSubtotal() {
+    public double getSubtotal() {
         return subtotal;
     }
 
@@ -64,10 +64,6 @@ public class ItensPedido {
 
     public LocalDateTime getData_modificacao() {
         return data_modificacao;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public void setId_pedido(Pedido pedido) {
@@ -86,12 +82,8 @@ public class ItensPedido {
         this.preco_unitario = preco_unitario;
     }
 
-    public void setSubtotal(int subtotal) {
+    public void setSubtotal(double subtotal) {
         this.subtotal = subtotal;
-    }
-
-    public void setData_criacao(LocalDateTime data_criacao) {
-        this.data_criacao = data_criacao;
     }
 
     public void setData_modificacao(LocalDateTime data_modificacao) {
