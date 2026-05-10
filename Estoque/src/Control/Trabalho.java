@@ -11,6 +11,9 @@ import DAO.ProdutoDAO;
 import DAO.UsuarioDAO;
 import DAO.MovimentacaoEstoqueDAO;
 import DAO.PedidoDAO;
+import DAO.CarrinhoDAO;
+import DAO.ItensCarrinhoDAO;
+import DAO.CupomDAO;
 
 import model.Pessoa;
 import model.Produto;
@@ -27,6 +30,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import model.ItensPedido;
 import model.Pedido;
+import model.Carrinho;
+import model.Cupom;
+import model.ItensCarrinho;
 
 
 
@@ -46,6 +52,9 @@ public class Trabalho {
     private MovimentacaoEstoqueDAO MovimentacaoDAO = new MovimentacaoEstoqueDAO(produtoDAO);
     private PedidoDAO pedidoDAO = new PedidoDAO();
     private EntregaDAO entregaDAO = new EntregaDAO();
+    private CarrinhoDAO carrinhoDAO = new CarrinhoDAO();
+    
+    private Carrinho carrinhoAtual = null;
     
     Scanner scanner = new Scanner(System.in);
         
@@ -291,6 +300,8 @@ public class Trabalho {
         
     }
     
+    
+
     
 }
 
