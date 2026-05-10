@@ -79,4 +79,21 @@ public class ItensCarrinhoDAO {
             System.out.println("nao existe Produto cadastrado");
         }
     }
+    
+    // No ItensCarrinhoDAO.java
+        public void mostrarItensDoCarrinho(long idCarrinho) {
+            boolean temItens = false;
+            System.out.println("--- ITENS NO SEU CARRINHO ---");
+            for (ItensCarrinho ic : itensc) {
+                if (ic != null && ic.get_carrinho().getId() == idCarrinho) {
+                    System.out.println("Produto: " + ic.get_produto().getNome() + 
+                                       " | Qtd: " + ic.getQuantidade() + 
+                                       " | Preço Unit: R$" + ic.getPreco_unitario());
+                    temItens = true;
+                }
+            }
+            if (!temItens) {
+                System.out.println("O carrinho está vazio.");
+            }
+        }
 }

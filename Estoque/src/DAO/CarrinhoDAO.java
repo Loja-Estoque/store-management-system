@@ -4,6 +4,7 @@
  */
 package DAO;
 
+import java.time.LocalDateTime;
 import model.Carrinho;
 
 /**
@@ -81,5 +82,20 @@ public class CarrinhoDAO {
         return false; // Retorna falso se não encontrou o produto para alterar
     }
     
+    
+    public void verificarCarrinhosExpirados(LocalDateTime agoraSimulado) {
+        for (int i = 0; i < carrinho.length; i++) {
+            if (carrinho[i] != null && carrinho[i].getStatus().equals("ABERTO")) {
+                // Calcula a diferença entre a criação e o tempo atual
+                long horas = java.time.Duration.between(carrinho[i].getData_criacao(), agoraSimulado).toHours();
+
+                if (horas >= 24) {
+                    carrinho[i].setStatus("EXPIRADO");
+                    carrinho[i].setData_modificacao(agoraSimulado);
+                    System.out.println("Carrinho ID " + carrinho[i].getId() + " expirou por tempo.");
+                }
+            }
+        }
+    }
     
 }

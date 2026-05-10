@@ -225,6 +225,7 @@ public class Trabalho {
                     Util.avancarDias(dias);
 
                     // Após avançar o tempo, rodamos a verificação de status
+                    carrinhoDAO.verificarCarrinhosExpirados(Util.getAgora());
                     entregaDAO.AtualizarStatus();
 
                     System.out.println("O tempo passou... Nova data: " + Util.getAgora());
@@ -239,8 +240,16 @@ public class Trabalho {
     {
         int opC = 99;
         do{
-            
+                
+                System.out.println("Qual item deseja comprar?");
                 produtoDAO.mostrarCompra();
+                    
+                int opP = Integer.parseInt(scanner.nextLine());
+                    
+                int id = opP;
+                Produto temp = produtoDAO.buscarPorId(id);
+                System.out.println("Qual quantidade: ");
+                int qnt = Integer.parseInt(scanner.nextLine());   
                 opC = mn.MenuCompras();
                 System.out.println("Digite sua opcao: ");
             switch (opC) {
@@ -253,18 +262,19 @@ public class Trabalho {
                     produtoDAO.mostrarTodos();
                 break;
                 case 2:
-                    System.out.println("Qual item deseja comprar?");
-                    produtoDAO.mostrarCompra();
-                    
-                    int opP = Integer.parseInt(scanner.nextLine());
-                    
-                    int id = opP;
-                    Produto temp = produtoDAO.buscarPorId(id);
-                    System.out.println("Qual quantidade: ");
-                    int qnt = Integer.parseInt(scanner.nextLine());                    
+                    FinalizarCompra(temp, qnt, u);
+                    ItensCarrinho TempIc = CriarItemCarrinho(carrinhoAtual, temp, qnt);
+                    if(itensCarrinhoDAO.Adicionar(TempIc))
+                    {
+                        System.out.println("Item Adicionado com sucesso");
+                    }
+                    else{
+                        System.out.println("Não foi possivel adicionar ao carrinho.");
+                    }
                 break;
                 case 3:
                     System.out.println("3 - Adcionar ao Carrinho");
+                    prepararCarrinho(u);
                     produtoDAO.mostrarTodos();
                 break;
                 default:
@@ -310,7 +320,18 @@ public class Trabalho {
                 this.carrinhoAtual.setUsuario(logado);
                 this.carrinhoAtual.setStatus("ABERTO");
                 carrinhoDAO.Adicionar(carrinhoAtual);
+                
             }
+        }
+        
+        private ItensCarrinho CriarItemCarrinho(Carrinho carrinho, Produto p, int quantidade)
+        {
+            ItensCarrinho Ic = new ItensCarrinho();
+            Ic.setId_carrinho(carrinho);
+            Ic.setId_produto(p);
+            Ic.setPreco_unitario(p.getPreco_venda());
+            Ic.setQuantidade(quantidade);
+            return Ic;
         }
     
         
@@ -361,7 +382,15 @@ public class Trabalho {
                         
             System.out.println("Venda Realizada com sucesso");
             
-            
+            Entrega entregaTemp = CriarEntrega(novoPedido, dataDeHojeNoSistema);
+            if(entregaDAO.Adicionar(entregaTemp))
+            {
+                System.out.println("Seu pedido esta em processo de "+ entregaTemp.getStatus());
+                System.out.println("Sua previsão de chegada no dia "+ entregaTemp.getData_entrega());
+            }
+            else{
+                System.out.println("Nao foi possivel realizar a entrega");
+            }
                         
         } else{
             System.out.println("Quantidade muito alta para o produto" + temp.getNome());
@@ -372,11 +401,6 @@ public class Trabalho {
     public void finalizarCarrinho(Produto p, int qnt) {
         
         FinalizarCompra(p, qnt,carrinhoAtual.getUsuario());
-        
-           
-
-        
-
         // 4. Fechar Carrinho
         carrinhoAtual.setStatus("FECHADO");
         this.carrinhoAtual = null; // Reseta para a próxima compra
@@ -392,6 +416,40 @@ public class Trabalho {
         e.setStatus("PREPARACAO");
         return e;
     }
+    
+    // No Trabalho.java, dentro do loop de cliente ou no método Comprar
+    private void gerenciarCarrinho(Usuario logado, Produto p, int quant) {
+
+        int op = -1;
+        while (op != 0) {
+            System.out.println("\n--- GERENCIAR CARRINHO (Status: " + carrinhoAtual.getStatus() + ") ---");
+            System.out.println("1 - Ver Itens");
+            System.out.println("2 - Finalizar Compra");
+            System.out.println("3 - Cancelar Carrinho");
+            System.out.println("0 - Voltar");
+            op = Integer.parseInt(scanner.nextLine());
+
+            switch (op) {
+                case 1:
+                    itensCarrinhoDAO.mostrarItensDoCarrinho(carrinhoAtual.getId());
+                    break;
+                case 2:
+                    
+                    System.out.println("Processando finalização...");
+                    finalizarCarrinho(p, quant);
+                    op = 0; // Sai após finalizar
+                    break;
+                case 3:
+                    carrinhoAtual.setStatus("CANCELADO");
+                    carrinhoAtual.setData_modificacao(Util.getAgora());
+                    System.out.println("Carrinho cancelado com sucesso.");
+                    this.carrinhoAtual = null; // Remove a referência atual
+                    op = 0;
+                    break;
+            }
+        }
+}
+    
     
 }
 
