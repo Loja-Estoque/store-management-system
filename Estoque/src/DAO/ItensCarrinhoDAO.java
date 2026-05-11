@@ -4,6 +4,7 @@
  */
 package DAO;
 
+import model.Carrinho;
 import model.ItensCarrinho;
 
 /**
@@ -17,6 +18,15 @@ public class ItensCarrinhoDAO {
         int ProximaPosicaoLivre = this.proximaPosicaoLivre();
         for (int i = 0; i < ProximaPosicaoLivre; i++) {
             if(itensc[i].getId() == id)
+                return itensc[i];
+        }
+        return null;
+    }
+    
+     public ItensCarrinho buscarPorCarrinho(Carrinho carrinho) {
+        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
+        for (int i = 0; i < ProximaPosicaoLivre; i++) {
+            if(itensc[i].get_carrinho() == carrinho)
                 return itensc[i];
         }
         return null;

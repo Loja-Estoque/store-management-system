@@ -547,7 +547,7 @@ public class Trabalho {
                         int gerenciar = Integer.parseInt(scanner.nextLine());
 
                         if (gerenciar == 1) {
-                            this.gerenciarCarrinho(u, null, 0);
+                            this.gerenciarCarrinho(u);
                         }
                     } else {
                         System.out.println("Seu carrinho está vazio ou expirado.");
@@ -612,11 +612,22 @@ public class Trabalho {
                     } else {
                         System.out.println("Não foi possivel adicionar ao carrinho.");
                     }
+                    opC =0;
                     break;
                 case 3:
-                    System.out.println("3 - Adcionar ao Carrinho");
                     prepararCarrinho(u);
-                    produtoDAO.mostrarTodos();
+                    ItensCarrinho Ic = CriarItemCarrinho(carrinhoAtual, temp, qnt);
+                    if(itensCarrinhoDAO.Adicionar(Ic))
+                    {
+                        System.out.println(temp.getNome() +"Foi adicionado com sucesso ao carrinho");
+                    }
+                    else
+                    {
+                        System.out.println("Não foi possível Adicionar ao carrinho");
+                    } 
+                    
+                    opC =0;
+                    
                     break;
                 default:
                     System.out.println("Por favor, escolha uma opcao valida\n");
@@ -687,7 +698,7 @@ public class Trabalho {
                 // 2. Aplicar Desconto (CUPOM)
                 Cupom cupom = cupomDAO.buscarPorCodigo(cod);
 
-                if (cupom != null && total >= cupom.getValor_minimo_pedido() && cupom.getData_validade().isBefore(dataDeHojeNoSistema)) {
+                if (cupom != null && total >= cupom.getValor_minimo_pedido() && !cupom.getData_validade().isBefore(dataDeHojeNoSistema)) {
 
                     if (cupom.getTipo_desconto().equals("FIXO")) {
                         total -= cupom.getValor_desconto();
@@ -744,7 +755,7 @@ public class Trabalho {
     }
 
     // No Trabalho.java, dentro do loop de cliente ou no método Comprar
-    private void gerenciarCarrinho(Usuario logado, Produto p, int quant) {
+    private void gerenciarCarrinho(Usuario logado) {
 
         int op = -1;
         while (op != 0) {
@@ -762,7 +773,8 @@ public class Trabalho {
                 case 2:
 
                     System.out.println("Processando finalização...");
-                    finalizarCarrinho(p, quant);
+                    ItensCarrinho tempIC = itensCarrinhoDAO.buscarPorCarrinho(carrinhoAtual);
+                    finalizarCarrinho(tempIC.get_produto(), tempIC.getQuantidade());
                     op = 0; // Sai após finalizar
                     break;
                 case 3:
@@ -778,11 +790,3 @@ public class Trabalho {
 
 }
 
-/* private static long serial;
-    private long id;
-    private long id_usuario;
-    private String status;  
-    private double valor_total;
-    private String forma_pagamento;
-    private LocalDateTime data_criacao;
-    private LocalDateTime data_modificacao;*/
