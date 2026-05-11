@@ -4,6 +4,7 @@
  */
 package model;
 
+import Util.Util;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -44,6 +45,7 @@ public class Pessoa {
     
     public void setNome(String nome){
         this.nome = nome;
+        this.data_modificacao = Util.getAgora();
     }
     
     public LocalDate getNascimento() {
@@ -52,6 +54,7 @@ public class Pessoa {
     
     public void setNascimento(LocalDate nascimento) {
         this.nascimento = nascimento;
+        this.data_modificacao = Util.getAgora();
     }
     
     public String getDocumento() {
@@ -60,6 +63,7 @@ public class Pessoa {
     
     public void setDocumento(String documento) {
         this.documento = documento;
+        this.data_modificacao = Util.getAgora();
     }
     
     public LocalDateTime getData_criacao() {

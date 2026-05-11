@@ -5,6 +5,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import Util.Util;
 
 public class ItensCarrinho {
     private static long serial;
@@ -62,18 +63,22 @@ public class ItensCarrinho {
 
     public void setId_carrinho(Carrinho carrinho) {
         this.carrinho = carrinho;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setId_produto(Produto produto) {
         this.produto = produto;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setPreco_unitario(double preco_unitario) {
         this.preco_unitario = preco_unitario;
+        this.data_modificacao = Util.getAgora();
     }
 
 

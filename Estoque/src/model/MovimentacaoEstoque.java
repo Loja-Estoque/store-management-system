@@ -4,6 +4,7 @@
  */
 package model;
 
+import Util.Util;
 import java.time.LocalDateTime;
 
 public class MovimentacaoEstoque {
@@ -63,21 +64,22 @@ public class MovimentacaoEstoque {
 
     public void setProduto(Produto produto) {
         this.produto = produto;
+        this.data_modificacao = Util.getAgora();
     }
     
     public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setValor_unitario(double valor_unitario) {
         this.valor_unitario = valor_unitario;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
 
     @Override

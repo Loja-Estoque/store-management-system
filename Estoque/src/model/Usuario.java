@@ -4,6 +4,7 @@
  */
 package model;
 
+import Util.Util;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -44,6 +45,7 @@ public class Usuario {
     
     public void setPessoa(Pessoa pessoa) {
         this.pessoa = pessoa;
+        this.data_modificacao = Util.getAgora();
     }
     
     public String getLogin(){
@@ -52,7 +54,7 @@ public class Usuario {
     
     public void setLogin(String login) {
         this.login = login;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
     
     public String getSenha(){
@@ -61,7 +63,7 @@ public class Usuario {
     
     public void setSenha(String senha) {
         this.senha = senha;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
     
     public LocalDateTime getData_criacao() {

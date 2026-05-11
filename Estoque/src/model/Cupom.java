@@ -6,6 +6,7 @@ package model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import Util.Util;
 
 public class Cupom {
     private static long serial;
@@ -71,26 +72,27 @@ public class Cupom {
 
     public void setCodigo(String codigo) {
         this.codigo = codigo;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setTipo_desconto(String tipo_desconto) {
         this.tipo_desconto = tipo_desconto;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setValor_desconto(double valor_desconto) {
         this.valor_desconto = valor_desconto;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setValor_minimo_pedido(double valor_minimo_pedido) {
         this.valor_minimo_pedido = valor_minimo_pedido;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setData_validade(LocalDate data_validade) {
         this.data_validade = data_validade;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
 
 

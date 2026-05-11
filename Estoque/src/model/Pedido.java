@@ -4,6 +4,7 @@
  */
 package model;
 
+import Util.Util;
 import java.time.LocalDateTime;
 
 public class Pedido {
@@ -68,26 +69,27 @@ public class Pedido {
 
     public void setId_usuario(Usuario u) {
         this.usuario = u;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setStatus(String status) {
         this.status = status;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setValor_total(double valor_total) {
         this.valor_total = valor_total;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setCupom(Cupom cupom) {
         this.cupom = cupom;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setForma_pagamento(String forma_pagamento) {
         this.forma_pagamento = forma_pagamento;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
 
 

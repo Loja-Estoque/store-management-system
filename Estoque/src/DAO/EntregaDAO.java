@@ -60,9 +60,9 @@ public class EntregaDAO {
         }
     }
     
-    public boolean remover(String nome) {
+    public boolean remover(int id) {
         for (int i = 0; i < entrega.length; i++) {
-            if (entrega[i] != null && entrega[i].getPedido().equals(nome)) {
+            if (entrega[i] != null && entrega[i].getId() == id) {
                 entrega[i] = null;
                 return true;
             }

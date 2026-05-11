@@ -80,4 +80,34 @@ public class PedidoDAO {
         }
         return total;
     }
+
+    public double calcularFaturamentoDiario(LocalDateTime data) {
+        double total = 0;
+        for (int i = 0; i < proximaPosicao; i++) {
+            if (pedidos[i] != null && Util.isMesmoDia(pedidos[i].getData_criacao(), data)) {
+                total += pedidos[i].getValor_total();
+            }
+        }
+        return total;
+    }
+
+    public double calcularFaturamentoMensal(LocalDateTime data) {
+        double total = 0;
+        for (int i = 0; i < proximaPosicao; i++) {
+            if (pedidos[i] != null && Util.isMesmoMes(pedidos[i].getData_criacao(), data)) {
+                total += pedidos[i].getValor_total();
+            }
+        }
+        return total;
+    }
+
+    public double calcularFaturamentoAnual(LocalDateTime data) {
+        double total = 0;
+        for (int i = 0; i < proximaPosicao; i++) {
+            if (pedidos[i] != null && Util.isMesmoAno(pedidos[i].getData_criacao(), data)) {
+                total += pedidos[i].getValor_total();
+            }
+        }
+        return total;
+    }
 }

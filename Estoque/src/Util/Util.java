@@ -27,4 +27,16 @@ public class Util {
     public static void setData(LocalDateTime novaData) {
         dataAtual = novaData;
     }
+    
+    public static boolean isMesmoDia(LocalDateTime data1, LocalDateTime data2) {
+        return data1.toLocalDate().isEqual(data2.toLocalDate());
+    }
+
+    public static boolean isMesmoMes(LocalDateTime data1, LocalDateTime data2) {
+        return data1.getYear() == data2.getYear() && data1.getMonth() == data2.getMonth();
+    }
+
+    public static boolean isMesmoAno(LocalDateTime data1, LocalDateTime data2) {
+        return data1.getYear() == data2.getYear();
+    }
 }

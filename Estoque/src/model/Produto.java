@@ -4,6 +4,7 @@
  */
 package model;
 
+import Util.Util;
 import java.time.LocalDateTime;
 
 public class Produto {
@@ -42,7 +43,7 @@ public class Produto {
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
     
 
@@ -72,17 +73,17 @@ public class Produto {
 
     public void setNome(String nome) {
         this.nome = nome;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();;
     }
 
     public void setPreco_venda(double preco_venda) {
         this.preco_venda = preco_venda;
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
     
     public void setData_criacao(LocalDateTime data_criacao) {

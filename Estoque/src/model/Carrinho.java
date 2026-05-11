@@ -4,6 +4,7 @@
  */
 package model;
 
+import Util.Util;
 import java.time.LocalDateTime;
 
 public class Carrinho {
@@ -52,18 +53,22 @@ public class Carrinho {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setStatus(String status) {
         this.status = status;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setData_criacao(LocalDateTime data_criacao) {
         this.data_criacao = data_criacao;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setData_modificacao(LocalDateTime data_modificacao) {
         this.data_modificacao = data_modificacao;
+        this.data_modificacao = Util.getAgora();
     }
 
     @Override

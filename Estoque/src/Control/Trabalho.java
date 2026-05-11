@@ -26,6 +26,7 @@ import view.Menu;
 import Util.Util;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import model.Cupom;
@@ -423,8 +424,16 @@ public class Trabalho {
                     break;
                 case 3: //relatório de faturamento
                     System.out.println("--- RELATÓRIO DE FATURAMENTO ---");
+                    LocalDateTime agora = Util.getAgora();
+                    double faturamentoD = pedidoDAO.calcularFaturamentoDiario(agora);
+                    double faturamentoM = pedidoDAO.calcularFaturamentoMensal(agora);
+                    double faturamentoA = pedidoDAO.calcularFaturamentoAnual(agora);
                     double faturamento = pedidoDAO.calcularFaturamentoTotal();
-                    System.out.println("Data da Consulta: " + Util.getAgora());
+
+                    System.out.println("Data da Consulta: " + agora);
+                    System.out.printf("Faturamento do Dia atual: R$ %.2f\n", faturamentoD);
+                    System.out.printf("Faturamento do Mês atual: R$ %.2f\n", faturamentoM);
+                    System.out.printf("Faturamento do Ano atual: R$ %.2f\n", faturamentoA);
                     System.out.printf("Faturamento Total Acumulado: R$ %.2f\n", faturamento);
                     System.out.println("===============================================");
                     break;
@@ -438,14 +447,39 @@ public class Trabalho {
         if (assunto == 6) { // Entrega
             switch (acao) {
                 case 1:
-                    // Chama seu método de criar produto que está na Trabalho
+                    System.out.println("Informe o ID da Entrega:");
+                    int idEnt = Integer.parseInt(scanner.nextLine());
+                    Entrega entStatus = entregaDAO.buscarPorId(idEnt);
+                    if (entStatus != null) {
+                        System.out.println("Informe NOVO Status (PREPARANDO/ENVIADO/EM_TRANSITO/ENTREGUE/CANCELADA): ");
+                        entStatus.setStatus(scanner.nextLine().toUpperCase());
+                        System.out.println("Status atualizado com sucesso!");
+                    }
                     break;
-                case 2:
+                case 2: //atualizar transportadora
+                    System.out.println("Informe o ID da Entrega: ");
+                    int idTransp = Integer.parseInt(scanner.nextLine());
+                    Entrega entTransp = entregaDAO.buscarPorId(idTransp);
+                    if (entTransp != null) {
+                        System.out.println("Informe NOVA Transportadora:");
+                        entTransp.setTransportadora(scanner.nextLine());
+                        System.out.println("Informe NOVO Código de Rastreio:");
+                        entTransp.setCodigo_rastreio(scanner.nextLine());
+                    }
                     break;
-                case 3:
+                case 3: //cancelar registro de entrega
+                    System.out.println("Informe o ID da Entrega para remover: ");
+                    int idRem = Integer.parseInt(scanner.nextLine());
+                    
+                    if (entregaDAO.remover(idRem)) {
+                        System.out.println("Cupom removido com sucesso!");
+                    } else {
+                        System.out.println("Cupom não encontrado!");
+                    }
                     break;
                 case 4:
-                    produtoDAO.mostrarTodos();
+                    System.out.println("--- RELATÓRIO DE ENTREGAS ---");
+                    entregaDAO.mostrarTodos();
                     break;
             }
         }
@@ -513,8 +547,6 @@ public class Trabalho {
                         int gerenciar = Integer.parseInt(scanner.nextLine());
 
                         if (gerenciar == 1) {
-                            // Como o seu sistema gerencia um item por vez no fluxo atual, 
-                            // passamos os dados do último item ou acessamos via DAO
                             this.gerenciarCarrinho(u, null, 0);
                         }
                     } else {

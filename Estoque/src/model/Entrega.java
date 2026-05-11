@@ -6,6 +6,7 @@ package model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import Util.Util;
 
 public class Entrega {
     private static long serial;
@@ -77,30 +78,37 @@ public class Entrega {
 
     public void setId_pedido(Pedido pedido) {
         this.pedido = pedido;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setStatus(String status) {
         this.status = status;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setTransportadora(String transportadora) {
         this.transportadora = transportadora;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setCodigo_rastreio(String codigo_rastreio) {
         this.codigo_rastreio = codigo_rastreio;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setData_envio(LocalDate data_envio) {
         this.data_envio = data_envio;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setData_entrega(LocalDate data_entrega) {
         this.data_entrega = data_entrega;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setData_criacao(LocalDateTime data_criacao) {
         this.data_criacao = data_criacao;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setData_modificacao(LocalDateTime data_modificacao) {

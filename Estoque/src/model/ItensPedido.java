@@ -4,6 +4,7 @@
  */
 package model;
 
+import Util.Util;
 import java.time.LocalDateTime;
 
 public class ItensPedido {
@@ -68,22 +69,27 @@ public class ItensPedido {
 
     public void setId_pedido(Pedido pedido) {
         this.pedido = pedido;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setId_produto(Produto produto) {
         this.produto = produto;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setPreco_unitario(double preco_unitario) {
         this.preco_unitario = preco_unitario;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setSubtotal(double subtotal) {
         this.subtotal = subtotal;
+        this.data_modificacao = Util.getAgora();
     }
 
     public void setData_modificacao(LocalDateTime data_modificacao) {
