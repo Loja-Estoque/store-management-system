@@ -80,6 +80,11 @@ public class Pessoa {
 
     @Override
     public String toString() {
-        return "Pessoa{" + "id=" + id + ", nome=" + nome + ", nascimento=" + nascimento + ", documento=" + documento + ", data_criacao=" + data_criacao + ", data_modificacao=" + data_modificacao + '}';
+        return "id: " + id 
+                + "\nNome: " + nome 
+                + "\nNascimento: " + nascimento 
+                + "\nDocumento: " + documento 
+                + "\nData_criacao: " + data_criacao 
+                + "Data_modificacao: " + data_modificacao;
     }
 }

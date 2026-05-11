@@ -25,7 +25,7 @@ public class CupomDAO {
     public Cupom buscarPorCodigo(String Codigo) {
         int ProximaPosicaoLivre = this.proximaPosicaoLivre();
         for (int i = 0; i < ProximaPosicaoLivre; i++) {
-            if(cupom[i].getCodigo() == Codigo)
+            if(cupom[i].getCodigo().equals(Codigo))
                 return cupom[i];
         }
         return null;
@@ -54,16 +54,16 @@ public class CupomDAO {
 
     }
     
-    /*public boolean remover(String nome) {
-        for (int i = 0; i < carrinho.length; i++) {
-            if (carrinho[i] != null && carrinho[i].getPedido().equals(nome)) {
-                carrinho[i] = null;
+    public boolean remover(String codigo) {
+        for (int i = 0; i < cupom.length; i++) {
+            if (cupom[i] != null && cupom[i].getCodigo().equals(codigo)) {
+                cupom[i] = null;
                 return true;
             }
         }
         return false;
 
-    }*/
+    }
     
     public void mostrarTodos() {
         boolean temProdutos = false;

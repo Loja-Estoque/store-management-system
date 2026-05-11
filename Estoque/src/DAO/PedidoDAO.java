@@ -6,6 +6,7 @@ package DAO;
 
 import java.time.LocalDateTime;
 import model.Pedido;
+import model.Usuario;
 import Util.Util;
 
 public class PedidoDAO {
@@ -42,6 +43,20 @@ public class PedidoDAO {
         }
         if (!temPedido) {
             System.out.println("Nenhum pedido registrado.");
+        }
+    }
+
+    public void mostrarTodosPorUsuario(Usuario u) {
+        boolean temPedido = false;
+        for (int i = 0; i < proximaPosicao; i++) {
+            if (pedidos[i] != null && pedidos[i].getId() == u.getId()) {
+                System.out.println(pedidos[i]);
+                temPedido = true;
+            }
+        }
+
+        if (!temPedido) {
+            System.out.println("\nVocê ainda não possui pedidos registrados.\n\n");
         }
     }
 

@@ -46,7 +46,7 @@ public class Trabalho {
     private ItensCarrinhoDAO itensCarrinhoDAO = new ItensCarrinhoDAO();
     private ItensPedidoDAO itensPedidoDAO = new ItensPedidoDAO();
     private CupomDAO cupomDAO = new CupomDAO();
- 
+
     private Carrinho carrinhoAtual = null;
 
     Scanner scanner = new Scanner(System.in);
@@ -93,9 +93,8 @@ public class Trabalho {
                             System.out.println("Usuario comum logado");
                             op1 = 0;
                             //Comprar(logado);
-                            mn.MenuCliente();
+                            this.gerenciarMenuCliente(logado);
 
-                            //int opADM = mn.MenuAdm();  
                         }
 
                         //loop adm ou comum
@@ -386,7 +385,15 @@ public class Trabalho {
                     }
                     break;
                 case 3: //remover
+                    cupomDAO.mostrarTodos();
+                    System.out.println("Digite o Codigo do cupom que deseja remover:");
+                    String nomeC = scanner.nextLine();
 
+                    if (cupomDAO.remover(nomeC)) {
+                        System.out.println("Cupom removido com sucesso!");
+                    } else {
+                        System.out.println("Cupom não encontrado!");
+                    }
                     break;
                 case 4: //relatório
                     cupomDAO.mostrarTodos();
@@ -417,7 +424,7 @@ public class Trabalho {
                 case 3: //relatório de faturamento
                     System.out.println("--- RELATÓRIO DE FATURAMENTO ---");
                     double faturamento = pedidoDAO.calcularFaturamentoTotal();
-                    System.out.println("Data da Consulta: " + Util.getAgora()); 
+                    System.out.println("Data da Consulta: " + Util.getAgora());
                     System.out.printf("Faturamento Total Acumulado: R$ %.2f\n", faturamento);
                     System.out.println("===============================================");
                     break;
@@ -482,21 +489,80 @@ public class Trabalho {
         }
     }
 
+    private void gerenciarMenuCliente(Usuario u) {
+        int opCliente = -1;
+        while (opCliente != 0) {
+            // Exibe o menu de opções para o cliente comum
+            opCliente = mn.MenuCliente();
+
+            switch (opCliente) {
+                case 1: // Comprar Produtos
+                    this.Comprar(u);
+                    break;
+
+                case 2: // Meu Carrinho
+                    if (carrinhoAtual != null && carrinhoAtual.getStatus().equals("ABERTO")) {
+                        System.out.println("--- SEU CARRINHO ATUAL ---");
+                        System.out.println(carrinhoAtual);
+
+                        // Mostra os itens já adicionados ao carrinho
+                        itensCarrinhoDAO.mostrarTodos();
+
+                        System.out.println("\nDeseja gerenciar seu carrinho?");
+                        System.out.println("1 - Sim / 0 - Voltar");
+                        int gerenciar = Integer.parseInt(scanner.nextLine());
+
+                        if (gerenciar == 1) {
+                            // Como o seu sistema gerencia um item por vez no fluxo atual, 
+                            // passamos os dados do último item ou acessamos via DAO
+                            this.gerenciarCarrinho(u, null, 0);
+                        }
+                    } else {
+                        System.out.println("Seu carrinho está vazio ou expirado.");
+                    }
+                    break;
+
+                case 3: // Meus Pedidos
+                    System.out.println("--- SEU HISTÓRICO DE PEDIDOS ---");
+                    pedidoDAO.mostrarTodosPorUsuario(u);
+                    break;
+
+                case 4: // Cupons
+                    System.out.println("--- CUPONS DISPONÍVEIS ---");
+                    cupomDAO.mostrarTodos();
+                    break;
+
+                case 5: // Meu Usuário
+                    System.out.println("--- SEUS DADOS ---");
+                    System.out.println(u);
+                    break;
+
+                case 0:
+                    System.out.println("Saindo da área do cliente...");
+                    break;
+
+                default:
+                    System.out.println("Opção inválida!");
+                    break;
+            }
+        }
+    }
+
     private void Comprar(Usuario u) {
         int opC = 99;
-        do{
-                
-                System.out.println("Qual item deseja comprar?");
-                produtoDAO.mostrarCompra();
-                    
-                int opP = Integer.parseInt(scanner.nextLine());
-                    
-                int id = opP;
-                Produto temp = produtoDAO.buscarPorId(id);
-                System.out.println("Qual quantidade: ");
-                int qnt = Integer.parseInt(scanner.nextLine());   
-                opC = mn.MenuCompras();
-                System.out.println("Digite sua opcao: ");
+        do {
+
+            System.out.println("Qual item deseja comprar?");
+            produtoDAO.mostrarCompra();
+
+            int opP = Integer.parseInt(scanner.nextLine());
+
+            int id = opP;
+            Produto temp = produtoDAO.buscarPorId(id);
+            System.out.println("Qual quantidade: ");
+            int qnt = Integer.parseInt(scanner.nextLine());
+            opC = mn.MenuCompras();
+            System.out.println("Digite sua opcao: ");
             switch (opC) {
 
                 case 0:
@@ -509,14 +575,12 @@ public class Trabalho {
                 case 2:
                     FinalizarCompra(temp, qnt, u);
                     ItensCarrinho TempIc = CriarItemCarrinho(carrinhoAtual, temp, qnt);
-                    if(itensCarrinhoDAO.Adicionar(TempIc))
-                    {
+                    if (itensCarrinhoDAO.Adicionar(TempIc)) {
                         System.out.println("Item Adicionado com sucesso");
-                    }
-                    else{
+                    } else {
                         System.out.println("Não foi possivel adicionar ao carrinho.");
                     }
-                break;
+                    break;
                 case 3:
                     System.out.println("3 - Adcionar ao Carrinho");
                     prepararCarrinho(u);
@@ -529,59 +593,52 @@ public class Trabalho {
         } while (opC != 0);
 
     }
-    
-    public Pedido CriarPedido(Usuario u, double quantidade, Produto p, double total)
-    {
+
+    public Pedido CriarPedido(Usuario u, double quantidade, Produto p, double total) {
         Pedido pedido = new Pedido();
         pedido.setId_usuario(u);
         pedido.setStatus("CRIADO");
         pedido.setValor_total(total);
         System.out.println("Qual será a forma de pagamento");
-        pedido.setForma_pagamento(scanner.nextLine());       
+        pedido.setForma_pagamento(scanner.nextLine());
         return pedido;
-        
+
     }
-    
-    private ItensPedido CriarItensPedido(Pedido pe, Produto po, int quantidade)
-    {
+
+    private ItensPedido CriarItensPedido(Pedido pe, Produto po, int quantidade) {
         ItensPedido itenspe = new ItensPedido();
         itenspe.setId_pedido(pe);
         itenspe.setId_produto(po);
         itenspe.setQuantidade(quantidade);
-        itenspe.setPreco_unitario(pe.getValor_total()/quantidade);
+        itenspe.setPreco_unitario(pe.getValor_total() / quantidade);
         itenspe.setSubtotal(pe.getValor_total());
         itensPedidoDAO.Adicionar(itenspe);
-        
+
         return itenspe;
     }
-    
-    
-    
+
     // Método para garantir que o usuário tenha um carrinho aberto
-        private void prepararCarrinho(Usuario logado) {
-            if (this.carrinhoAtual == null) {
-                this.carrinhoAtual = new Carrinho();
-                this.carrinhoAtual.setUsuario(logado);
-                this.carrinhoAtual.setStatus("ABERTO");
-                carrinhoDAO.Adicionar(carrinhoAtual);
-                
-            }
+    private void prepararCarrinho(Usuario logado) {
+        if (this.carrinhoAtual == null) {
+            this.carrinhoAtual = new Carrinho();
+            this.carrinhoAtual.setUsuario(logado);
+            this.carrinhoAtual.setStatus("ABERTO");
+            carrinhoDAO.Adicionar(carrinhoAtual);
+
         }
-        
-        private ItensCarrinho CriarItemCarrinho(Carrinho carrinho, Produto p, int quantidade)
-        {
-            ItensCarrinho Ic = new ItensCarrinho();
-            Ic.setId_carrinho(carrinho);
-            Ic.setId_produto(p);
-            Ic.setPreco_unitario(p.getPreco_venda());
-            Ic.setQuantidade(quantidade);
-            return Ic;
-        }
-    
-        
-    public void FinalizarCompra(Produto temp, int qnt, Usuario u)
-    {
-        if(MovimentacaoDAO.registrarSaida(temp, qnt)){
+    }
+
+    private ItensCarrinho CriarItemCarrinho(Carrinho carrinho, Produto p, int quantidade) {
+        ItensCarrinho Ic = new ItensCarrinho();
+        Ic.setId_carrinho(carrinho);
+        Ic.setId_produto(p);
+        Ic.setPreco_unitario(p.getPreco_venda());
+        Ic.setQuantidade(quantidade);
+        return Ic;
+    }
+
+    public void FinalizarCompra(Produto temp, int qnt, Usuario u) {
+        if (MovimentacaoDAO.registrarSaida(temp, qnt)) {
             Pedido novoPedido = new Pedido();
             novoPedido.setId_usuario(u);
             double total = temp.getPreco_venda() * qnt;
@@ -591,16 +648,13 @@ public class Trabalho {
             System.out.println("1 - sim");
             int pcupom = Integer.parseInt(scanner.nextLine());
             LocalDate dataDeHojeNoSistema = Util.getAgora().toLocalDate();
-            if(pcupom == 1)
-            {
+            if (pcupom == 1) {
                 System.out.println("Insira o codigo do Cupom: ");
                 String cod = scanner.nextLine();
-                
-                 // 2. Aplicar Desconto (CUPOM)
-               
-                
+
+                // 2. Aplicar Desconto (CUPOM)
                 Cupom cupom = cupomDAO.buscarPorCodigo(cod);
-                
+
                 if (cupom != null && total >= cupom.getValor_minimo_pedido() && cupom.getData_validade().isBefore(dataDeHojeNoSistema)) {
 
                     if (cupom.getTipo_desconto().equals("FIXO")) {
@@ -609,49 +663,45 @@ public class Trabalho {
                         total -= (total * (cupom.getValor_desconto() / 100));
                     }
                     novoPedido.setCupom(cupom);
-                }               
+                }
             }
             novoPedido.setValor_total(total);
-            
+
             System.out.println("Qual será a forma de pagamento");
             novoPedido.setForma_pagamento(scanner.nextLine());
             novoPedido.setStatus("PAGO");
-            
-            if(pedidoDAO.adicionar(novoPedido)){
+
+            if (pedidoDAO.adicionar(novoPedido)) {
                 System.out.println("Pedido realizado com sucesso");
                 ItensPedido tempIP = this.CriarItensPedido(novoPedido, temp, qnt);
-            } else{
+            } else {
                 System.out.println("Erro, não foi possível realizar seu pedido");
             }
-                        
+
             System.out.println("Venda Realizada com sucesso");
-            
+
             Entrega entregaTemp = CriarEntrega(novoPedido, dataDeHojeNoSistema);
-            if(entregaDAO.Adicionar(entregaTemp))
-            {
-                System.out.println("Seu pedido esta em processo de "+ entregaTemp.getStatus());
-                System.out.println("Sua previsão de chegada no dia "+ entregaTemp.getData_entrega());
-            }
-            else{
+            if (entregaDAO.Adicionar(entregaTemp)) {
+                System.out.println("Seu pedido esta em processo de " + entregaTemp.getStatus());
+                System.out.println("Sua previsão de chegada no dia " + entregaTemp.getData_entrega());
+            } else {
                 System.out.println("Nao foi possivel realizar a entrega");
             }
-                        
-        } else{
+
+        } else {
             System.out.println("Quantidade muito alta para o produto" + temp.getNome());
         }
     }
-        
-    
+
     public void finalizarCarrinho(Produto p, int qnt) {
-        
-        FinalizarCompra(p, qnt,carrinhoAtual.getUsuario());
+
+        FinalizarCompra(p, qnt, carrinhoAtual.getUsuario());
         // 4. Fechar Carrinho
         carrinhoAtual.setStatus("FECHADO");
         this.carrinhoAtual = null; // Reseta para a próxima compra
     }
 
-    private Entrega CriarEntrega(Pedido pe, LocalDate data)
-    {
+    private Entrega CriarEntrega(Pedido pe, LocalDate data) {
         Entrega e = new Entrega();
         e.setId_pedido(pe);
         e.setData_envio(data.plusDays(1));
@@ -660,7 +710,7 @@ public class Trabalho {
         e.setStatus("PREPARACAO");
         return e;
     }
-    
+
     // No Trabalho.java, dentro do loop de cliente ou no método Comprar
     private void gerenciarCarrinho(Usuario logado, Produto p, int quant) {
 
@@ -678,7 +728,7 @@ public class Trabalho {
                     itensCarrinhoDAO.mostrarItensDoCarrinho(carrinhoAtual.getId());
                     break;
                 case 2:
-                    
+
                     System.out.println("Processando finalização...");
                     finalizarCarrinho(p, quant);
                     op = 0; // Sai após finalizar
@@ -693,8 +743,6 @@ public class Trabalho {
             }
         }
     }
-    
-    
 
 }
 
