@@ -39,7 +39,7 @@ public class Pedido {
         return id;
     }
 
-    public Usuario getId_usuario() {
+    public Usuario getUsuario() {
         return usuario;
     }
 

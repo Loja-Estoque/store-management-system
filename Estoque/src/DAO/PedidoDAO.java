@@ -49,7 +49,7 @@ public class PedidoDAO {
     public void mostrarTodosPorUsuario(Usuario u) {
         boolean temPedido = false;
         for (int i = 0; i < proximaPosicao; i++) {
-            if (pedidos[i] != null && pedidos[i].getId() == u.getId()) {
+            if (pedidos[i] != null && pedidos[i].getUsuario()== u) {
                 System.out.println(pedidos[i]);
                 temPedido = true;
             }
