@@ -83,7 +83,7 @@ public class ProdutoDAO {
         boolean temProdutos = false;
         for (Produto p : produtos) {
             if (p != null) {
-                System.out.println(p.getId() +" - " + p.getNome());
+                System.out.println(p.getId() +" - " + p.getNome() + " | valor: R$ " + p.getPreco_venda());
                 temProdutos = true;
             }
         }
