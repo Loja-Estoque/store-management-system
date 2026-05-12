@@ -92,7 +92,6 @@ public class Trabalho {
                             }
                         } else {
                             System.out.println("Usuario comum logado");
-                            op1 = 0;
                             //Comprar(logado);
                             this.gerenciarMenuCliente(logado);
 
@@ -181,7 +180,7 @@ public class Trabalho {
                     Pessoa p = criaPessoa();
                     pessoaDAO.adicionar(p);
 
-                    Usuario u = criaUsuario(criaPessoa());
+                    Usuario u = criaUsuario(p);
                     usuarioDAO.Adicionar(u);
 
                     System.out.println("Usuário criado com sucesso!");
@@ -278,10 +277,25 @@ public class Trabalho {
 
                     System.out.println("Preço: ");
                     p.setPreco_venda(Double.parseDouble(scanner.nextLine()));
+                    
+                    System.out.println("Descricao: ");
+                    p.setDescricao(scanner.nextLine());
 
                     p.setData_criacao(Util.getAgora());
-                    p.setAtivo(true);
+                    p.setAtivo(false);
                     produtoDAO.adicionar(p);
+                    
+                    System.out.println("Para ativar o produto precisa adiciona-lo ao estoque");
+                    
+                    MovimentacaoEstoque tempME = CriarMovimentacaoEntrada(p);
+                    if(MovimentacaoDAO.Adicionar(tempME)){
+                        System.out.println("Adicionado");
+                        p.setAtivo(true);
+                    }
+                    else{
+                        System.out.println("Não foi possível adicionar esse produto");
+                    }
+                    
                     break;
                 case 2: //alterar
                     produtoDAO.mostrarTodos();
@@ -598,13 +612,9 @@ public class Trabalho {
             switch (opC) {
 
                 case 0:
-                    System.out.println("0 - Sair do programa");
+                    System.out.println("0 - Cancelar a compra");
                     break;
                 case 1:
-                    System.out.println("1 - Mostrar Produtos\n\n");
-                    produtoDAO.mostrarTodos();
-                    break;
-                case 2:
                     FinalizarCompra(temp, qnt, u);
                     ItensCarrinho TempIc = CriarItemCarrinho(carrinhoAtual, temp, qnt);
                     if (itensCarrinhoDAO.Adicionar(TempIc)) {
@@ -614,7 +624,7 @@ public class Trabalho {
                     }
                     opC =0;
                     break;
-                case 3:
+                case 2:
                     prepararCarrinho(u);
                     ItensCarrinho Ic = CriarItemCarrinho(carrinhoAtual, temp, qnt);
                     if(itensCarrinhoDAO.Adicionar(Ic))
@@ -679,6 +689,17 @@ public class Trabalho {
         Ic.setQuantidade(quantidade);
         return Ic;
     }
+    
+    private MovimentacaoEstoque CriarMovimentacaoEntrada(Produto p)
+    {
+        MovimentacaoEstoque m = new MovimentacaoEstoque();
+        m.setProduto(p);
+        System.out.println("Qual sera a quantidade? ");
+        m.setQuantidade(Integer.parseInt(scanner.nextLine()));
+        m.setTipo("ENTRADA");
+        m.setValor_unitario(p.getPreco_venda());
+        return m;
+    }
 
     public void FinalizarCompra(Produto temp, int qnt, Usuario u) {
         if (MovimentacaoDAO.registrarSaida(temp, qnt)) {
@@ -686,6 +707,7 @@ public class Trabalho {
             novoPedido.setId_usuario(u);
             double total = temp.getPreco_venda() * qnt;
             novoPedido.setStatus("CRIADO");
+            System.out.println("O valor da compra eh de: R$ " + total);
             System.out.println("Quer adicionar algum cupom?");
             System.out.println("0 - não");
             System.out.println("1 - sim");
@@ -706,6 +728,11 @@ public class Trabalho {
                         total -= (total * (cupom.getValor_desconto() / 100));
                     }
                     novoPedido.setCupom(cupom);
+                    
+                    System.out.println("O valor após o cupom eh de: R$ " + total);
+                } else
+                {
+                    System.out.println("Cupom invalido");
                 }
             }
             novoPedido.setValor_total(total);
