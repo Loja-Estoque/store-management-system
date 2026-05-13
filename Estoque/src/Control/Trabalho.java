@@ -773,8 +773,7 @@ public class Trabalho {
             ItensCarrinho TempIc = CriarItemCarrinho(carrinhoAtual, temp, qnt);
             if (itensCarrinhoDAO.Adicionar(TempIc)) {
                 System.out.println("Item Adicionado ao histórico com sucesso");
-                carrinhoAtual.setStatus("FECHADO");
-                this.carrinhoAtual = null; 
+                carrinhoAtual.setStatus("FECHADO"); 
             }
 
             System.out.println("Venda Realizada com sucesso");
