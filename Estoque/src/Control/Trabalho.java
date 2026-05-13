@@ -453,7 +453,7 @@ public class Trabalho {
                     break;
                 case 4:
                     System.out.println("--- LISTAGEM GERAL DE PEDIDOS ---");
-                    produtoDAO.mostrarTodos();
+                    pedidoDAO.mostrarTodos();
                     break;
             }
         }
@@ -524,6 +524,7 @@ public class Trabalho {
 
                     // Após avançar o tempo, rodamos a verificação de status
                     carrinhoDAO.verificarCarrinhosExpirados(Util.getAgora());
+                    pedidoDAO.AtualizarStatus();
                     entregaDAO.AtualizarStatus();
 
                     System.out.println("O tempo passou... Nova data: " + Util.getAgora());
@@ -774,10 +775,11 @@ public class Trabalho {
     private Entrega CriarEntrega(Pedido pe, LocalDate data) {
         Entrega e = new Entrega();
         e.setId_pedido(pe);
+        e.setCodigo_rastreio(Long.toString(e.getId()));
         e.setData_envio(data.plusDays(1));
         e.setData_entrega(data.plusDays(2));
         e.setTransportadora("Sedex");
-        e.setStatus("PREPARACAO");
+        e.setStatus("PREPARANDO");
         return e;
     }
 

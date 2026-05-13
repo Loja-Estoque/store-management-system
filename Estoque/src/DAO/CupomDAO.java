@@ -21,9 +21,9 @@ public class CupomDAO {
         Cupom c1 = new Cupom();
         c1.setCodigo("PROMO1");
         c1.setData_validade(dataDeHojeNoSistema.plusDays(2));
-        c1.setValor_desconto(20);
+        c1.setValor_desconto(5);
         c1.setTipo_desconto("FIXO");
-        c1.setValor_minimo_pedido(25.00);
+        c1.setValor_minimo_pedido(10.00);
         this.Adicionar(c1);
         
         Cupom c2 = new Cupom();
@@ -31,7 +31,7 @@ public class CupomDAO {
         c2.setData_validade(dataDeHojeNoSistema.plusDays(2));
         c2.setValor_desconto(5);
         c2.setTipo_desconto("PERCENTUAL");
-        c2.setValor_minimo_pedido(25.00);
+        c2.setValor_minimo_pedido(10.00);
         this.Adicionar(c2);
     }
     
