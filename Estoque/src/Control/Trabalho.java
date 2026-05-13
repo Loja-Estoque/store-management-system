@@ -279,9 +279,22 @@ public class Trabalho {
                     System.out.println("Preço: ");
                     p.setPreco_venda(Double.parseDouble(scanner.nextLine()));
 
+                    System.out.println("Descricao: ");
+                    p.setDescricao(scanner.nextLine());
+
                     p.setData_criacao(Util.getAgora());
-                    p.setAtivo(true);
-                    produtoDAO.adicionar(p);
+
+                    System.out.println("Para ativar o produto precisa adiciona-lo ao estoque");
+
+                    MovimentacaoEstoque tempME = CriarMovimentacaoEntrada(p);
+                    if (MovimentacaoDAO.Adicionar(tempME)) {
+                        p.setAtivo(true);
+                        produtoDAO.adicionar(p);
+                        System.out.println("Adicionado");
+                    } else {
+                        System.out.println("Não foi possível adicionar esse produto");
+                    }
+
                     break;
                 case 2: //alterar
                     produtoDAO.mostrarTodos();
@@ -470,7 +483,7 @@ public class Trabalho {
                 case 3: //cancelar registro de entrega
                     System.out.println("Informe o ID da Entrega para remover: ");
                     int idRem = Integer.parseInt(scanner.nextLine());
-                    
+
                     if (entregaDAO.remover(idRem)) {
                         System.out.println("Cupom removido com sucesso!");
                     } else {
@@ -486,15 +499,48 @@ public class Trabalho {
 
         if (assunto == 7) { // Estoque
             switch (acao) {
-                case 1:
-                    // Chama seu método de criar produto que está na Trabalho
+                case 1: //registrar entrada
+                    System.out.println("ID do Produto para entrada:");
+                    int idProd = Integer.parseInt(scanner.nextLine());
+                    Produto prod = produtoDAO.buscarPorId(idProd);
+                    if (prod != null) {
+                        System.out.println("Quantidade de entrada:");
+                        int qtd = Integer.parseInt(scanner.nextLine());
+
+                        MovimentacaoEstoque mov = new MovimentacaoEstoque();
+                        mov.setProduto(prod);
+                        mov.setQuantidade(qtd);
+                        mov.setTipo("ENTRADA");
+                        mov.setValor_unitario(prod.getPreco_venda());
+
+                        if (MovimentacaoDAO.Adicionar(mov)) {
+                            System.out.println("Entrada registrada com sucesso!");
+                        }
+                    }
                     break;
-                case 2:
+                case 2: //registro de saída por perda
+                    System.out.println("ID do Produto:");
+                    int idAjuste = Integer.parseInt(scanner.nextLine());
+                    Produto pAjuste = produtoDAO.buscarPorId(idAjuste);
+                    if (pAjuste != null) {
+                        System.out.println("Quantidade de saída/ajuste:");
+                        int qtdAjuste = Integer.parseInt(scanner.nextLine());
+                        MovimentacaoDAO.registrarSaida(pAjuste, qtdAjuste);
+                        System.out.println("Ajuste realizado.");
+                    }
                     break;
-                case 3:
+                case 3: //saldo por produto
+                    System.out.println("ID do Produto:");
+                    int idSaldo = Integer.parseInt(scanner.nextLine());
+                    Produto pSaldo = produtoDAO.buscarPorId(idSaldo);
+                    if (pSaldo != null) {
+                        int saldo = MovimentacaoDAO.consultarSaldo(pSaldo);
+                        System.out.println("Saldo atual de " + pSaldo.getNome() + ": " + saldo);
+                    }
                     break;
                 case 4:
-                    produtoDAO.mostrarTodos();
+                    System.out.println("--- EXTRATO GERAL DE ESTOQUE ---");
+                    MovimentacaoDAO.mostrarTodos();
                     break;
             }
         }
@@ -612,22 +658,19 @@ public class Trabalho {
                     } else {
                         System.out.println("Não foi possivel adicionar ao carrinho.");
                     }
-                    opC =0;
+                    opC = 0;
                     break;
                 case 3:
                     prepararCarrinho(u);
                     ItensCarrinho Ic = CriarItemCarrinho(carrinhoAtual, temp, qnt);
-                    if(itensCarrinhoDAO.Adicionar(Ic))
-                    {
-                        System.out.println(temp.getNome() +"Foi adicionado com sucesso ao carrinho");
-                    }
-                    else
-                    {
+                    if (itensCarrinhoDAO.Adicionar(Ic)) {
+                        System.out.println(temp.getNome() + "Foi adicionado com sucesso ao carrinho");
+                    } else {
                         System.out.println("Não foi possível Adicionar ao carrinho");
-                    } 
-                    
-                    opC =0;
-                    
+                    }
+
+                    opC = 0;
+
                     break;
                 default:
                     System.out.println("Por favor, escolha uma opcao valida\n");
@@ -680,6 +723,16 @@ public class Trabalho {
         return Ic;
     }
 
+    private MovimentacaoEstoque CriarMovimentacaoEntrada(Produto p) {
+        MovimentacaoEstoque m = new MovimentacaoEstoque();
+        m.setProduto(p);
+        System.out.println("Qual sera a quantidade? ");
+        m.setQuantidade(Integer.parseInt(scanner.nextLine()));
+        m.setTipo("ENTRADA");
+        m.setValor_unitario(p.getPreco_venda());
+        return m;
+    }
+
     public void FinalizarCompra(Produto temp, int qnt, Usuario u) {
         if (MovimentacaoDAO.registrarSaida(temp, qnt)) {
             Pedido novoPedido = new Pedido();
@@ -706,6 +759,10 @@ public class Trabalho {
                         total -= (total * (cupom.getValor_desconto() / 100));
                     }
                     novoPedido.setCupom(cupom);
+                    
+                    System.out.println("O valor após o cupom eh de: R$ " + total);
+                } else {
+                    System.out.println("Cupom invalido");
                 }
             }
             novoPedido.setValor_total(total);
@@ -789,4 +846,3 @@ public class Trabalho {
     }
 
 }
-

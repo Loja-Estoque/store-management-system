@@ -13,6 +13,29 @@ import model.Cupom;
 public class CupomDAO {
     Cupom[] cupom = new Cupom[5];
     
+<<<<<<< Updated upstream
+=======
+    public CupomDAO()
+    {
+        LocalDate dataDeHojeNoSistema = Util.getAgora().toLocalDate();
+        Cupom c1 = new Cupom();
+        c1.setCodigo("PROMO1");
+        c1.setData_validade(dataDeHojeNoSistema.plusDays(2));
+        c1.setValor_desconto(20);
+        c1.setTipo_desconto("FIXO");
+        c1.setValor_minimo_pedido(0.20);
+        this.Adicionar(c1);
+        
+        Cupom c2 = new Cupom();
+        c2.setCodigo("PROMO2");
+        c2.setData_validade(dataDeHojeNoSistema.plusDays(2));
+        c2.setValor_desconto(5);
+        c2.setTipo_desconto("PERCENTUAL");
+        c2.setValor_minimo_pedido(25.00);
+        this.Adicionar(c2);
+    }
+    
+>>>>>>> Stashed changes
     public Cupom buscarPorId(int id) {
         int ProximaPosicaoLivre = this.proximaPosicaoLivre();
         for (int i = 0; i < ProximaPosicaoLivre; i++) {

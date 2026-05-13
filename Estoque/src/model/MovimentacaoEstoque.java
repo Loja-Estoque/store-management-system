@@ -30,8 +30,8 @@ public class MovimentacaoEstoque {
     {
         this.id = ++MovimentacaoEstoque.serial;
          
-        this.data_criacao = LocalDateTime.now();
-        this.data_modificacao = LocalDateTime.now();
+        this.data_criacao = Util.getAgora();
+        this.data_modificacao = Util.getAgora();
     }
 
     public long getId() {
@@ -84,6 +84,7 @@ public class MovimentacaoEstoque {
 
     @Override
     public String toString() {
-        return "MovimentacaoEstoque id=" + id + "\n id_produto=\n" + produto + "\n quantidade:" + quantidade + "\n tipo:" + tipo + "\n valor_unitario:" + valor_unitario;
-    }
+        return "\n id: " + id 
+                + "\n produto: " + produto.getNome() + "\n quantidade: " + quantidade + "\n tipo: " + tipo + "\n valor_unitario: " + valor_unitario;
+    } 
 }

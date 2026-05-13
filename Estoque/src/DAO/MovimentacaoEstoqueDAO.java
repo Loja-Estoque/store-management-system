@@ -23,6 +23,7 @@ public class MovimentacaoEstoqueDAO {
         Produto p1 = produtoDAO.buscarPorId(1);
         Produto p2 = produtoDAO.buscarPorId(2);
         Produto p3 = produtoDAO.buscarPorId(3);
+        Produto p4 = produtoDAO.buscarPorId(4);
         
         MovimentacaoEstoque m1 = new MovimentacaoEstoque();
         m1.setProduto(p1);

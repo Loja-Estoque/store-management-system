@@ -32,8 +32,8 @@ public class Produto {
     {
         this.id = ++Produto.serial;
         
-        this.data_criacao = LocalDateTime.now();
-        this.data_modificacao = LocalDateTime.now();
+        this.data_criacao = Util.getAgora();
+        this.data_modificacao = Util.getAgora();
         this.ativo = true;
     }
     
