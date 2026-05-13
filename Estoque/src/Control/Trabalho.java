@@ -770,14 +770,6 @@ public class Trabalho {
 
             this.CriarItensPedido(novoPedido, temp, qnt);
 
-            prepararCarrinho(u);
-            ItensCarrinho TempIc = CriarItemCarrinho(carrinhoAtual, temp, qnt);
-            if (itensCarrinhoDAO.Adicionar(TempIc)) {
-                System.out.println("Item Adicionado ao histórico com sucesso");
-                carrinhoAtual.setStatus("FECHADO");
-                this.carrinhoAtual = null; 
-            }
-
             System.out.println("Venda Realizada com sucesso");
             Entrega entregaTemp = CriarEntrega(novoPedido, Util.getAgora().toLocalDate());
             if (entregaDAO.Adicionar(entregaTemp)) {
@@ -797,8 +789,14 @@ public class Trabalho {
 
         FinalizarCompra(p, qnt, carrinhoAtual.getUsuario());
         // 4. Fechar Carrinho
-        carrinhoAtual.setStatus("FECHADO");
-        this.carrinhoAtual = null; // Reseta para a próxima compra
+        //prepararCarrinho(u);
+            ItensCarrinho TempIc = CriarItemCarrinho(carrinhoAtual, p, qnt);
+            if (itensCarrinhoDAO.Adicionar(TempIc)) {
+                System.out.println("Item Adicionado ao histórico com sucesso");
+                carrinhoAtual.setStatus("FECHADO");
+                this.carrinhoAtual = null; 
+            }
+        
     }
 
     private Entrega CriarEntrega(Pedido pe, LocalDate data) {

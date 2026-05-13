@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * @author W10
  */
 public class MovimentacaoEstoqueDAO {
-    MovimentacaoEstoque[] Me = new MovimentacaoEstoque[5];
+    MovimentacaoEstoque[] Me = new MovimentacaoEstoque[10];
    
     public MovimentacaoEstoqueDAO(ProdutoDAO produtoDAO)
     {
