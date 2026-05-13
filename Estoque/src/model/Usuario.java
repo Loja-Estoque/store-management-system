@@ -30,9 +30,9 @@ public class Usuario {
     {
         this.id = ++Usuario.serial;
         
-        this.data_criacao = LocalDateTime.now();
+        this.data_criacao = Util.getAgora();
         
-        this.data_modificacao = LocalDateTime.now();
+        this.data_modificacao = Util.getAgora();
     }
     
     public long getId(){
@@ -81,9 +81,7 @@ public class Usuario {
         return "id: " + id 
                 + "\nPessoa: \n" + pessoa 
                 + "\nLogin: " + login 
-                + "\nSenha: " + senha 
-                + "\nData_criacao: " + data_criacao 
-                + "\nData_modificacao: " + data_modificacao;
+                + "\nSenha: " + senha;
     }
 
     @Override

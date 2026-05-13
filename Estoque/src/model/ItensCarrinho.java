@@ -29,8 +29,8 @@ public class ItensCarrinho {
     {
         this.id = ++ItensCarrinho.serial;
         
-        this.data_criacao = LocalDateTime.now();
-        this.data_modificacao = LocalDateTime.now();
+        this.data_criacao = Util.getAgora();
+        this.data_modificacao = Util.getAgora();
     }
 
     public long getId() {

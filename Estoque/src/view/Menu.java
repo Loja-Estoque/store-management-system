@@ -92,8 +92,8 @@ public class Menu {
             case 8:
                 builder.append("CONFIGURAÇÃO DE CALENDÁRIO\n");
                 builder.append("0 - Voltar\n");
-                builder.append("1 - Ver data atual\n");
-                builder.append("2 - Avançar dias\n");
+                builder.append("1 - Avançar dias\n");
+                builder.append("2 - Ver data atual\n");
                 break;
             default:
                 builder.append("0 - Para sair do programa\n");

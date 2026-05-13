@@ -15,6 +15,7 @@ import model.Cupom;
 public class CupomDAO {
     Cupom[] cupom = new Cupom[5];
     
+
     public CupomDAO()
     {
         LocalDate dataDeHojeNoSistema = Util.getAgora().toLocalDate();
@@ -34,7 +35,6 @@ public class CupomDAO {
         c2.setValor_minimo_pedido(10.00);
         this.Adicionar(c2);
     }
-    
     public Cupom buscarPorId(int id) {
         int ProximaPosicaoLivre = this.proximaPosicaoLivre();
         for (int i = 0; i < ProximaPosicaoLivre; i++) {
