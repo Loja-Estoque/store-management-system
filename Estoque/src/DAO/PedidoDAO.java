@@ -49,7 +49,7 @@ public class PedidoDAO {
     public void mostrarTodosPorUsuario(Usuario u) {
         boolean temPedido = false;
         for (int i = 0; i < proximaPosicao; i++) {
-            if (pedidos[i] != null && pedidos[i].getId() == u.getId()) {
+            if (pedidos[i] != null && pedidos[i].getUsuario()== u) {
                 System.out.println(pedidos[i]);
                 temPedido = true;
             }
@@ -109,5 +109,32 @@ public class PedidoDAO {
             }
         }
         return total;
+    }
+    
+    public void AtualizarStatus()
+    {
+        LocalDateTime hoje = Util.getAgora();
+    
+
+        for(Pedido e : pedidos) {
+            if (e != null) {
+                // Calcula a diferença em horas entre a última mudança e o "agora" simulado
+                long horasPassadas = java.time.Duration.between(e.getData_modificacao(), hoje).toHours();
+
+                if (horasPassadas >= 24) {
+                    switch (e.getStatus()) {
+                        case "PAGO":
+                            e.setStatus("ENVIADO");
+                            //p.setDataModificacao(hoje);
+                            break;
+                        case "ENVIADO":
+                            e.setStatus("ENTREGUE");
+                            //p.setDataModificacao(hoje);
+                            break;
+
+                    }
+                }
+            }
+        }
     }
 }

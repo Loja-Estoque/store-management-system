@@ -73,6 +73,6 @@ public class Carrinho {
 
     @Override
     public String toString() {
-        return "Carrinho{" + "id=" + id + ", usuario=" + usuario + ", status=" + status + ", data_criacao=" + data_criacao + ", data_modificacao=" + data_modificacao + '}';
+        return "Carrinho: " + "id:" + id + "\nusuario:" + usuario.getPessoa().getNome() + "\nstatus=" + status + "\ndata_criacao=" + data_criacao + "\ndata_modificacao=" + data_modificacao;
     }
 }

@@ -18,19 +18,19 @@ public class ProdutoDAO {
         Produto p1 = new Produto();
         p1.setNome("Pao Frances");
         p1.setDescricao("Pao pequeno quentinho");
-        p1.setPreco_venda(0.50);
+        p1.setPreco_venda(2.50);
         this.adicionar(p1);
         
         Produto p2 = new Produto();
         p2.setNome("Broa de milho");
         p2.setDescricao("Broa doce para deixar sua manha mais feliz");
-        p2.setPreco_venda(0.60);
+        p2.setPreco_venda(1.60);
         this.adicionar(p2);
         
         Produto p3 = new Produto();
         p3.setNome("Sonho");
         p3.setDescricao("Sonho recheado com doce de Leite, nem parece que acordou");
-        p3.setPreco_venda(0.30);
+        p3.setPreco_venda(3.30);
         this.adicionar(p3);
     }
     
@@ -83,7 +83,7 @@ public class ProdutoDAO {
         boolean temProdutos = false;
         for (Produto p : produtos) {
             if (p != null) {
-                System.out.println(p.getId() +" - " + p.getNome());
+                System.out.println(p.getId() +" - " + p.getNome() + " | valor: R$ " + p.getPreco_venda());
                 temProdutos = true;
             }
         }

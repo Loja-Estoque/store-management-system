@@ -126,10 +126,9 @@ public class Menu {
     public int MenuCompras() {
         StringBuilder builder = new StringBuilder("");
         builder.append("Sistema de compras\n");
-        builder.append("0 - Para sair do programa\n");
-        builder.append("1 - Mostrar Produtos\n");
-        builder.append("2 - Comprar\n");
-        builder.append("3 - Adcionar ao Carrinho\n");
+        builder.append("0 - Para cancelar a compra\n");
+        builder.append("1 - Comprar\n");
+        builder.append("2 - Adcionar ao Carrinho\n");
         builder.append("Qual opcao deseja: ");
 
         System.out.println(builder.toString());

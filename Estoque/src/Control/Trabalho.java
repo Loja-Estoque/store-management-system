@@ -92,7 +92,6 @@ public class Trabalho {
                             }
                         } else {
                             System.out.println("Usuario comum logado");
-                            op1 = 0;
                             //Comprar(logado);
                             this.gerenciarMenuCliente(logado);
 
@@ -181,7 +180,7 @@ public class Trabalho {
                     Pessoa p = criaPessoa();
                     pessoaDAO.adicionar(p);
 
-                    Usuario u = criaUsuario(criaPessoa());
+                    Usuario u = criaUsuario(p);
                     usuarioDAO.Adicionar(u);
 
                     System.out.println("Usuário criado com sucesso!");
@@ -278,7 +277,7 @@ public class Trabalho {
 
                     System.out.println("Preço: ");
                     p.setPreco_venda(Double.parseDouble(scanner.nextLine()));
-
+                    
                     System.out.println("Descricao: ");
                     p.setDescricao(scanner.nextLine());
 
@@ -452,7 +451,7 @@ public class Trabalho {
                     break;
                 case 4:
                     System.out.println("--- LISTAGEM GERAL DE PEDIDOS ---");
-                    produtoDAO.mostrarTodos();
+                    pedidoDAO.mostrarTodos();
                     break;
             }
         }
@@ -556,6 +555,7 @@ public class Trabalho {
 
                     // Após avançar o tempo, rodamos a verificação de status
                     carrinhoDAO.verificarCarrinhosExpirados(Util.getAgora());
+                    pedidoDAO.AtualizarStatus();
                     entregaDAO.AtualizarStatus();
 
                     System.out.println("O tempo passou... Nova data: " + Util.getAgora());
@@ -644,13 +644,9 @@ public class Trabalho {
             switch (opC) {
 
                 case 0:
-                    System.out.println("0 - Sair do programa");
+                    System.out.println("0 - Cancelar a compra");
                     break;
                 case 1:
-                    System.out.println("1 - Mostrar Produtos\n\n");
-                    produtoDAO.mostrarTodos();
-                    break;
-                case 2:
                     FinalizarCompra(temp, qnt, u);
                     ItensCarrinho TempIc = CriarItemCarrinho(carrinhoAtual, temp, qnt);
                     if (itensCarrinhoDAO.Adicionar(TempIc)) {
@@ -660,7 +656,7 @@ public class Trabalho {
                     }
                     opC = 0;
                     break;
-                case 3:
+                case 2:
                     prepararCarrinho(u);
                     ItensCarrinho Ic = CriarItemCarrinho(carrinhoAtual, temp, qnt);
                     if (itensCarrinhoDAO.Adicionar(Ic)) {
@@ -739,6 +735,7 @@ public class Trabalho {
             novoPedido.setId_usuario(u);
             double total = temp.getPreco_venda() * qnt;
             novoPedido.setStatus("CRIADO");
+            System.out.println("O valor da compra eh de: R$ " + total);
             System.out.println("Quer adicionar algum cupom?");
             System.out.println("0 - não");
             System.out.println("1 - sim");
@@ -761,7 +758,9 @@ public class Trabalho {
                     novoPedido.setCupom(cupom);
                     
                     System.out.println("O valor após o cupom eh de: R$ " + total);
-                } else {
+
+                } else
+                {
                     System.out.println("Cupom invalido");
                 }
             }
@@ -804,10 +803,11 @@ public class Trabalho {
     private Entrega CriarEntrega(Pedido pe, LocalDate data) {
         Entrega e = new Entrega();
         e.setId_pedido(pe);
+        e.setCodigo_rastreio(Long.toString(e.getId()));
         e.setData_envio(data.plusDays(1));
         e.setData_entrega(data.plusDays(2));
         e.setTransportadora("Sedex");
-        e.setStatus("PREPARACAO");
+        e.setStatus("PREPARANDO");
         return e;
     }
 
