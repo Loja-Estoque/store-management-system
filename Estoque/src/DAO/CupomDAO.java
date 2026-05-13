@@ -34,7 +34,7 @@ public class CupomDAO {
         c2.setValor_minimo_pedido(10.00);
         this.Adicionar(c2);
     }
-    
+
     public Cupom buscarPorId(int id) {
         int ProximaPosicaoLivre = this.proximaPosicaoLivre();
         for (int i = 0; i < ProximaPosicaoLivre; i++) {

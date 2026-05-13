@@ -711,7 +711,9 @@ public class Trabalho {
         Ic.setPreco_unitario(p.getPreco_venda());
         Ic.setQuantidade(quantidade);
         return Ic;
-    }   
+
+    }
+    
 
     private MovimentacaoEstoque CriarMovimentacaoEntrada(Produto p) {
         MovimentacaoEstoque m = new MovimentacaoEstoque();
@@ -752,7 +754,6 @@ public class Trabalho {
                     novoPedido.setCupom(cupom);
                     
                     System.out.println("O valor após o cupom eh de: R$ " + total);
-
                 } else
                 {
                     System.out.println("Cupom invalido");
@@ -795,8 +796,14 @@ public class Trabalho {
 
         FinalizarCompra(p, qnt, carrinhoAtual.getUsuario());
         // 4. Fechar Carrinho
-        carrinhoAtual.setStatus("FECHADO");
-        this.carrinhoAtual = null; // Reseta para a próxima compra
+        //prepararCarrinho(u);
+            ItensCarrinho TempIc = CriarItemCarrinho(carrinhoAtual, p, qnt);
+            if (itensCarrinhoDAO.Adicionar(TempIc)) {
+                System.out.println("Item Adicionado ao histórico com sucesso");
+                carrinhoAtual.setStatus("FECHADO");
+                this.carrinhoAtual = null; 
+            }
+        
     }
 
     private Entrega CriarEntrega(Pedido pe, LocalDate data) {
