@@ -648,12 +648,6 @@ public class Trabalho {
                     break;
                 case 1:
                     FinalizarCompra(temp, qnt, u);
-                    ItensCarrinho TempIc = CriarItemCarrinho(carrinhoAtual, temp, qnt);
-                    if (itensCarrinhoDAO.Adicionar(TempIc)) {
-                        System.out.println("Item Adicionado com sucesso");
-                    } else {
-                        System.out.println("Não foi possivel adicionar ao carrinho.");
-                    }
                     opC = 0;
                     break;
                 case 2:
@@ -717,7 +711,7 @@ public class Trabalho {
         Ic.setPreco_unitario(p.getPreco_venda());
         Ic.setQuantidade(quantidade);
         return Ic;
-    }
+    }   
 
     private MovimentacaoEstoque CriarMovimentacaoEntrada(Produto p) {
         MovimentacaoEstoque m = new MovimentacaoEstoque();
@@ -771,21 +765,27 @@ public class Trabalho {
             novoPedido.setStatus("PAGO");
 
             if (pedidoDAO.adicionar(novoPedido)) {
-                System.out.println("Pedido realizado com sucesso");
-                ItensPedido tempIP = this.CriarItensPedido(novoPedido, temp, qnt);
-            } else {
-                System.out.println("Erro, não foi possível realizar seu pedido");
+            System.out.println("Pedido realizado com sucesso");
+
+            this.CriarItensPedido(novoPedido, temp, qnt);
+
+            prepararCarrinho(u);
+            ItensCarrinho TempIc = CriarItemCarrinho(carrinhoAtual, temp, qnt);
+            if (itensCarrinhoDAO.Adicionar(TempIc)) {
+                System.out.println("Item Adicionado ao histórico com sucesso");
+                carrinhoAtual.setStatus("FECHADO");
+                this.carrinhoAtual = null; 
             }
 
             System.out.println("Venda Realizada com sucesso");
-
-            Entrega entregaTemp = CriarEntrega(novoPedido, dataDeHojeNoSistema);
+            Entrega entregaTemp = CriarEntrega(novoPedido, Util.getAgora().toLocalDate());
             if (entregaDAO.Adicionar(entregaTemp)) {
-                System.out.println("Seu pedido esta em processo de " + entregaTemp.getStatus());
-                System.out.println("Sua previsão de chegada no dia " + entregaTemp.getData_entrega());
-            } else {
-                System.out.println("Nao foi possivel realizar a entrega");
+                System.out.println("Status: " + entregaTemp.getStatus());
+                System.out.println("Previsão: " + entregaTemp.getData_entrega());
             }
+        } else {
+            System.out.println("Erro, não foi possível realizar seu pedido");
+        }
 
         } else {
             System.out.println("Quantidade muito alta para o produto" + temp.getNome());
