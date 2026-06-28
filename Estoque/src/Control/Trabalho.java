@@ -38,7 +38,7 @@ import model.ItensCarrinho;
 public class Trabalho {
 
     private PessoaDAO pessoaDAO = new PessoaDAO();
-    private UsuarioDAO usuarioDAO = new UsuarioDAO(pessoaDAO);
+    private UsuarioDAO usuarioDAO = new UsuarioDAO();
     private ProdutoDAO produtoDAO = new ProdutoDAO();
     private MovimentacaoEstoqueDAO MovimentacaoDAO = new MovimentacaoEstoqueDAO(produtoDAO);
     private PedidoDAO pedidoDAO = new PedidoDAO();
@@ -69,32 +69,35 @@ public class Trabalho {
                     String login = scanner.nextLine();
                     System.out.println("Senha: ");
                     String senha = scanner.nextLine();
-                    Usuario logado = usuarioDAO.buscaUsuarioLogin(login, senha);
+                    Usuario logado = usuarioDAO.buscarPorLogin(login);
 
                     if (logado != null) {
+                        
+                        if(logado.getSenha().equals(senha)){
 
-                        if ("Administrador".equals(logado.getLogin())) {
-                            System.out.println("Usuario Administrador logado");
+                            if ("Administrador".equals(logado.getLogin())) {
+                                System.out.println("Usuario Administrador logado");
 
-                            //System.out.println("Prox Menu");
-                            int assunto = -1;
+                                //System.out.println("Prox Menu");
+                                int assunto = -1;
 
-                            while (assunto != 0) {
-                                assunto = mn.MenuAdm();
+                                while (assunto != 0) {
+                                    assunto = mn.MenuAdm();
 
-                                if (assunto != 0) {
-                                    int acao = mn.MenuAdm1(assunto);
+                                    if (assunto != 0) {
+                                        int acao = mn.MenuAdm1(assunto);
 
-                                    if (acao != 0) {
-                                        this.executarAcao(assunto, acao);
+                                        if (acao != 0) {
+                                            this.executarAcao(assunto, acao);
+                                        }
                                     }
                                 }
-                            }
-                        } else {
-                            System.out.println("Usuario comum logado");
-                            //Comprar(logado);
-                            this.gerenciarMenuCliente(logado);
+                            } else {
+                                System.out.println("Usuario comum logado");
+                                //Comprar(logado);
+                                this.gerenciarMenuCliente(logado);
 
+                            }
                         }
 
                         //loop adm ou comum
@@ -108,7 +111,7 @@ public class Trabalho {
                     if( pessoaDAO.adicionar(temp) != null ) {
                         System.out.println("Pessoa adicionada com sucesso");
                         Usuario tempu = this.criaUsuario(temp);
-                        if (usuarioDAO.Adicionar(tempu)) {
+                        if (usuarioDAO.adicionar(tempu) != null) {
                             System.out.println("Usuario adicionado com sucesso");
                         } else {
                             System.out.println("Usuario nao adicionado");
@@ -161,8 +164,9 @@ public class Trabalho {
 
     private Usuario criaUsuario(Pessoa p) {
         Usuario u1 = new Usuario();
-
-        u1.setPessoa(p);
+        
+        Pessoa pessoaBanco = pessoaDAO.buscarDocumento(p.getDocumento());
+        u1.setPessoa(pessoaBanco);
 
         System.out.println("Informe seu login: ");
         u1.setLogin(scanner.nextLine());
@@ -181,7 +185,7 @@ public class Trabalho {
                     pessoaDAO.adicionar(p);
 
                     Usuario u = criaUsuario(p);
-                    usuarioDAO.Adicionar(u);
+                    usuarioDAO.adicionar(u);
 
                     System.out.println("Usuário criado com sucesso!");
                     break;
@@ -190,31 +194,37 @@ public class Trabalho {
                     String loginA = scanner.nextLine();
                     String senhaA = scanner.nextLine();
 
-                    Usuario usuarioExistente = usuarioDAO.buscaUsuarioLogin(loginA, senhaA);
+                    Usuario usuarioExistente = usuarioDAO.buscarPorLogin(loginA);
+                    if(usuarioExistente.getSenha().equals(senhaA)){
+                        if (usuarioExistente != null) {
+                            System.out.println("Informe o NOVO login: ");
+                            String novoLogin = scanner.nextLine();
+                            System.out.println("Informe a NOVA senha: ");
+                            String novaSenha = scanner.nextLine();
 
-                    if (usuarioExistente != null) {
-                        System.out.println("Informe o NOVO login: ");
-                        String novoLogin = scanner.nextLine();
-                        System.out.println("Informe a NOVA senha: ");
-                        String novaSenha = scanner.nextLine();
+                            usuarioExistente.setLogin(novoLogin);
+                            usuarioExistente.setSenha(novaSenha);
 
-                        usuarioExistente.setLogin(novoLogin);
-                        usuarioExistente.setSenha(novaSenha);
-
-                        if (usuarioDAO.alterar(usuarioExistente)) {
-                            System.out.println("Usuário removido com sucesso!");
+                            if (usuarioDAO.alterar(usuarioExistente)) {
+                                System.out.println("Usuário alterado com sucesso!");
+                            } else {
+                                System.out.println("Erro ao salvar alterações.");
+                            }
                         } else {
-                            System.out.println("Erro ao salvar alterações.");
+                            System.out.println("Usuário não encontrado.");
                         }
-                    } else {
-                        System.out.println("Usuário não encontrado.");
+                    } else{
+                        System.out.println("Senha incorreta.");
                     }
+
+                    
                     break;
                 case 3: //deletar
                     System.out.println("Digite o Login do usuário que deseja remover:");
                     String login = scanner.nextLine();
+                    Usuario temp = usuarioDAO.buscarPorLogin(login);
 
-                    if (usuarioDAO.remover(login)) {
+                    if (usuarioDAO.Excluir(temp) != null) {
                         System.out.println("Usuário removido com sucesso!");
                     } else {
                         System.out.println("Usuário não encontrado.");
@@ -222,7 +232,7 @@ public class Trabalho {
                     break;
                 case 4: //mostrar relatório
                     System.out.println("--- RELATÓRIO GERAL DE USUARIOS ---\n\n");
-                    usuarioDAO.mostrarTodos();
+                    usuarioDAO.Mostrar();
                     break;
             }
         }
