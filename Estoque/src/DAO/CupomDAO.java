@@ -52,8 +52,8 @@ public class CupomDAO {
         try(Connection con = new ConnectionFactory().getConnection();
             PreparedStatement stmt = con.prepareStatement(sql)){
 
-            stmt.setString(2, elemento.getCodigo());
-            stmt.setString(3, elemento.getTipo_desconto());
+            stmt.setString(1, elemento.getCodigo());
+            stmt.setString(2, elemento.getTipo_desconto());
             stmt.setDouble(3, elemento.getValor_minimo_pedido());
             
             stmt.setDate(4, Date.valueOf(elemento.getData_validade()));

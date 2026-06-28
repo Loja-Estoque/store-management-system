@@ -4,6 +4,15 @@
  */
 package DAO;
 
+import connection.ConnectionFactory;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import model.Produto;
 
 /**
@@ -11,107 +20,171 @@ import model.Produto;
  * @author W10
  */
 public class ProdutoDAO {
-    Produto[] produtos = new Produto[5];
     
-    public ProdutoDAO()
-    {
-        Produto p1 = new Produto();
-        p1.setNome("Pao Frances");
-        p1.setDescricao("Pao pequeno quentinho");
-        p1.setPreco_venda(2.50);
-        this.adicionar(p1);
-        
-        Produto p2 = new Produto();
-        p2.setNome("Broa de milho");
-        p2.setDescricao("Broa doce para deixar sua manha mais feliz");
-        p2.setPreco_venda(1.60);
-        this.adicionar(p2);
-        
-        Produto p3 = new Produto();
-        p3.setNome("Sonho");
-        p3.setDescricao("Sonho recheado com doce de Leite, nem parece que acordou");
-        p3.setPreco_venda(3.30);
-        this.adicionar(p3);
+    public Produto adicionar(Produto elemento) {
+        String sql =
+        "INSERT INTO Produto "
+        + "(nome, descricao, preco_venda, ativo, data_criacao, data_modificacao)"
+        + " VALUES (?,?,?,?,?,?)";
+
+        try(Connection con = new ConnectionFactory().getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql)){
+            
+            stmt.setString(1, elemento.getNome());
+
+            stmt.setString(2, elemento.getDescricao());
+
+            stmt.setDouble(3, elemento.getPreco_venda());
+            
+            stmt.setBoolean(4, elemento.isAtivo());
+            
+
+            stmt.setTimestamp(5,
+                Timestamp.valueOf(elemento.getData_criacao()));
+
+            stmt.setTimestamp(6,
+                Timestamp.valueOf(elemento.getData_modificacao()));
+
+            stmt.executeUpdate();
+            
+            return elemento;
+
+        } catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        //na verdade deveria retornar o elemento que foi inserido agora
+       
     }
     
-    public Produto buscarPorId(int id) {
-        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
-        for (int i = 0; i < ProximaPosicaoLivre; i++) {
-            if(produtos[i].getId() == id)
-                return produtos[i];
+    public List<Produto> getLista() {
+
+        String sql = "select * from Produto";
+
+        List<Produto> produtos = new ArrayList<>();
+
+        try (Connection con = new ConnectionFactory().getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while(rs.next()){
+
+                Produto produto = new Produto();
+
+                produto.setId(rs.getLong("id"));
+                
+                produto.setNome(rs.getString("nome"));
+                
+                produto.setDescricao(rs.getString("descricao"));
+                
+                produto.setPreco_venda(rs.getDouble("preco_venda"));
+                
+                produto.setAtivo(rs.getBoolean("ativo"));
+                
+                produto.setData_criacao(rs.getTimestamp("data_criacao").toLocalDateTime());
+                
+                produto.setData_modificacao(rs.getTimestamp("data_modificacao").toLocalDateTime());
+                
+                produtos.add(produto);
+            }
+
+        } catch(SQLException e){
+            throw new RuntimeException(e);
         }
+
+        return produtos;
+    }
+    
+    public Produto buscarPorId(long id){
+        String sql = "select * from Produto where id = ?";
+        
+        try (Connection con = new ConnectionFactory().getConnection();
+         PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setLong(1,id);
+                
+            ResultSet rs = stmt.executeQuery();
+                
+            if(rs.next()){
+                Produto produto = new Produto();
+
+                produto.setId(rs.getLong("id"));
+                
+                produto.setNome(rs.getString("nome"));
+                
+                produto.setDescricao(rs.getString("descricao"));
+                
+                produto.setPreco_venda(rs.getDouble("preco_venda"));
+                
+                produto.setAtivo(rs.getBoolean("ativo"));
+                
+                produto.setData_criacao(rs.getTimestamp("data_criacao").toLocalDateTime());
+                
+                produto.setData_modificacao(rs.getTimestamp("data_modificacao").toLocalDateTime());
+
+                return produto;
+            }
+        } catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        
         return null;
     }
     
-    public boolean adicionar(Produto p)
-    {
-        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
-        if(ProximaPosicaoLivre != -1)
-        {
-            produtos[ProximaPosicaoLivre] = p;
+    
+    public boolean alterar(Produto produto) {
+        
+        String sql = "Uptade Produto" 
+                + "set nome = ?"
+                + "descricao = ?"
+                + "preco_venda = ?"
+                + "ativo = ?"
+                + "data_moficacao = ?"
+                + "where id = ?";
+        try(Connection con = new ConnectionFactory().getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql)){
+            
+            stmt.setString(1, produto.getNome());
+
+            stmt.setString(2, produto.getDescricao());
+
+            stmt.setDouble(3, produto.getPreco_venda());
+            
+            stmt.setBoolean(4, produto.isAtivo());
+            
+            stmt.setTimestamp(5, Timestamp.valueOf(produto.getData_modificacao()));
+
+            stmt.setLong(7,
+                produto.getId());
             return true;
-        } else {
+            
+        }catch(SQLException e){
             return false;
         }
-    }
-    
-    private int proximaPosicaoLivre() {
-        for (int i = 0; i < produtos.length; i++) {
-            if (produtos[i] == null) {
-                return i;
-            }
-
-        }
-        return -1;
 
     }
     
-    public void mostrarTodos() {
-        boolean temProdutos = false;
-        for (Produto p : produtos) {
-            if (p != null) {
-                System.out.println(p);
-                temProdutos = true;
-            }
+    public Produto Excluir(Produto produto){
+        String sql = "delete from Produto where id = ?";
+        
+        try(Connection con = new ConnectionFactory().getConnection();
+                PreparedStatement stmt = con.prepareStatement(sql)){
+            
+            stmt.setLong(1, produto.getId());
+            
+            stmt.execute();
+            
+            System.out.println("Produto excluído");
+            
+        }catch(SQLException e){
+            throw new RuntimeException(e);
         }
-        if (!temProdutos) {
-            System.out.println("nao existe Produto cadastrado");
-        }
+        
+        return produto;
     }
     
-    public void mostrarCompra() {
-        boolean temProdutos = false;
-        for (Produto p : produtos) {
-            if (p != null) {
-                System.out.println(p.getId() +" - " + p.getNome() + " | valor: R$ " + p.getPreco_venda());
-                temProdutos = true;
-            }
+    public void Mostrar(){
+        List<Produto> produtos = getLista();
+        for(Produto produto : produtos){
+            System.out.println(produto.toString());
         }
-        if (!temProdutos) {
-            System.out.println("nao existe Produto cadastrado");
-        }
-    }
-    
-    
-    public boolean remover(String nome) {
-        for (int i = 0; i < produtos.length; i++) {
-            if (produtos[i] != null && produtos[i].getNome().equals(nome)) {
-                produtos[i] = null;
-                return true;
-            }
-        }
-        return false;
-
-    }
-    
-    public boolean alterar(Produto produtoAtualizado) {
-        for (int i = 0; i < produtos.length; i++) {
-            // Verifica se a posição não é nula e se o ID é igual ao do produto atualizado
-            if (produtos[i] != null && produtos[i].getId() == produtoAtualizado.getId()) {
-                produtos[i] = produtoAtualizado; // Substitui o antigo pelo novo
-                return true;
-            }
-        }
-        return false; // Retorna falso se não encontrou o produto para alterar
     }
 }
