@@ -15,7 +15,7 @@ public class UsuarioDAO {
     private Usuario[] usuarios = new Usuario[5];
     
     public UsuarioDAO(PessoaDAO pessoaDAO){
-        Pessoa pAdm = pessoaDAO.buscarDocumento("12345678");
+        /*Pessoa pAdm = pessoaDAO.buscarDocumento("12345678");
         Pessoa pCm = pessoaDAO.buscarDocumento("87654321");
         
         if(pAdm != null)
@@ -31,7 +31,7 @@ public class UsuarioDAO {
             uComum.setLogin("Comum");
             uComum.setSenha("1234");
             this.Adicionar(uComum);
-        }
+        }*/
     }
     
     public Usuario buscaUsuarioLogin(String login, String senha) {

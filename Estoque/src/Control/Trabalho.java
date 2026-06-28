@@ -105,7 +105,7 @@ public class Trabalho {
                     break;
                 case 2:
                     Pessoa temp = this.criaPessoa();
-                    if (pessoaDAO.adicionar(temp)) {
+                    if( pessoaDAO.adicionar(temp) != null ) {
                         System.out.println("Pessoa adicionada com sucesso");
                         Usuario tempu = this.criaUsuario(temp);
                         if (usuarioDAO.Adicionar(tempu)) {
@@ -244,9 +244,6 @@ public class Trabalho {
                         System.out.print("Informe o NOVO nome: ");
                         pExistente.setNome(scanner.nextLine());
 
-                        if (pessoaDAO.alterar(pExistente)) {
-                            System.out.println("Dados da pessoa atualizados!");
-                        }
                     } else {
                         System.out.println("Pessoa não encontrada!");
                     }
@@ -254,8 +251,8 @@ public class Trabalho {
                 case 3:
                     System.out.println("Digite o documento da pessoa que deseja remover:");
                     String docD = scanner.nextLine();
-
-                    if (pessoaDAO.remove(docD)) {
+                    Pessoa temp = pessoaDAO.buscarDocumento(docD);
+                    if (pessoaDAO.Excluir(temp) != null) {
                         System.out.println("Pessoa removida com sucesso!");
                     } else {
                         System.out.println("Pessoa não encontrada!");
@@ -263,7 +260,7 @@ public class Trabalho {
                     break;
                 case 4:
                     System.out.println("--- RELATÓRIO GERAL DE PESSOAS ---\n\n");
-                    pessoaDAO.mostrarTodos();
+                    pessoaDAO.Mostrar();
                     break;
             }
         }
