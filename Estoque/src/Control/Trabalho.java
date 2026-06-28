@@ -372,14 +372,14 @@ public class Trabalho {
 
                     Cupom novoCupom = new Cupom(cod, tipo, valDesc, valMin, validade, Util.getAgora(), Util.getAgora());
 
-                    if (cupomDAO.Adicionar(novoCupom)) {
+                    if (cupomDAO.adicionar(novoCupom)!=null) {
                         System.out.println("Cupom cadastrado com sucesso!");
                     } else {
                         System.out.println("Erro: Não foi possível cadastrar seu cupom.");
                     }
                     break;
                 case 2: //alterar
-                    cupomDAO.mostrarTodos();
+                    cupomDAO.Mostrar();
                     System.out.print("Digite o ID do cupom que deseja alterar: ");
                     int idAlt = Integer.parseInt(scanner.nextLine());
                     Cupom cupomExistente = cupomDAO.buscarPorId(idAlt);
@@ -405,18 +405,19 @@ public class Trabalho {
                     }
                     break;
                 case 3: //remover
-                    cupomDAO.mostrarTodos();
+                    cupomDAO.Mostrar();
                     System.out.println("Digite o Codigo do cupom que deseja remover:");
                     String nomeC = scanner.nextLine();
+                    Cupom temp = cupomDAO.buscarPorCodigo(nomeC);
 
-                    if (cupomDAO.remover(nomeC)) {
+                    if (cupomDAO.Excluir(temp)!=null) {
                         System.out.println("Cupom removido com sucesso!");
                     } else {
                         System.out.println("Cupom não encontrado!");
                     }
                     break;
                 case 4: //relatório
-                    cupomDAO.mostrarTodos();
+                    cupomDAO.Mostrar();
                     break;
             }
         }
@@ -444,9 +445,9 @@ public class Trabalho {
                 case 3: //relatório de faturamento
                     System.out.println("--- RELATÓRIO DE FATURAMENTO ---");
                     LocalDateTime agora = Util.getAgora();
-                    double faturamentoD = pedidoDAO.calcularFaturamentoDiario(agora);
-                    double faturamentoM = pedidoDAO.calcularFaturamentoMensal(agora);
-                    double faturamentoA = pedidoDAO.calcularFaturamentoAnual(agora);
+                    double faturamentoD = pedidoDAO.calcularFaturamentoDiario(agora.toLocalDate());
+                    double faturamentoM = pedidoDAO.calcularFaturamentoMensal(agora.toLocalDate());
+                    double faturamentoA = pedidoDAO.calcularFaturamentoAnual(agora.toLocalDate());
                     double faturamento = pedidoDAO.calcularFaturamentoTotal();
 
                     System.out.println("Data da Consulta: " + agora);
@@ -458,7 +459,7 @@ public class Trabalho {
                     break;
                 case 4:
                     System.out.println("--- LISTAGEM GERAL DE PEDIDOS ---");
-                    pedidoDAO.mostrarTodos();
+                    pedidoDAO.Mostrar();
                     break;
             }
         }
@@ -614,7 +615,7 @@ public class Trabalho {
 
                 case 4: // Cupons
                     System.out.println("--- CUPONS DISPONÍVEIS ---");
-                    cupomDAO.mostrarTodos();
+                    cupomDAO.Mostrar();
                     break;
 
                 case 5: // Meu Usuário
@@ -772,7 +773,7 @@ public class Trabalho {
             novoPedido.setForma_pagamento(scanner.nextLine());
             novoPedido.setStatus("PAGO");
 
-            if (pedidoDAO.adicionar(novoPedido)) {
+            if (pedidoDAO.adicionar(novoPedido)!=null ) {
             System.out.println("Pedido realizado com sucesso");
 
             this.CriarItensPedido(novoPedido, temp, qnt);

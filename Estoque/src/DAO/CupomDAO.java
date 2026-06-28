@@ -5,7 +5,16 @@
 package DAO;
 
 import Util.Util;
+import connection.ConnectionFactory;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import model.Cupom;
 
 /**
@@ -13,11 +22,10 @@ import model.Cupom;
  * @author W10
  */
 public class CupomDAO {
-    Cupom[] cupom = new Cupom[5];
 
     public CupomDAO()
     {
-        LocalDate dataDeHojeNoSistema = Util.getAgora().toLocalDate();
+        /*LocalDate dataDeHojeNoSistema = Util.getAgora().toLocalDate();
         Cupom c1 = new Cupom();
         c1.setCodigo("PROMO1");
         c1.setData_validade(dataDeHojeNoSistema.plusDays(2));
@@ -32,82 +40,208 @@ public class CupomDAO {
         c2.setValor_desconto(5);
         c2.setTipo_desconto("PERCENTUAL");
         c2.setValor_minimo_pedido(10.00);
-        this.Adicionar(c2);
+        this.Adicionar(c2);*/
     }
 
-    public Cupom buscarPorId(int id) {
-        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
-        for (int i = 0; i < ProximaPosicaoLivre; i++) {
-            if(cupom[i].getId() == id)
-                return cupom[i];
+    public Cupom adicionar(Cupom elemento) {
+        String sql =
+        "INSERT INTO Cupom "
+        + "(codigo, tipo_desconto, valor_minimo_pedido, data_validade, ativo, data_criacao, data_modificacao)"
+        + " VALUES (?,?,?,?,?,?,?,?)";
+
+        try(Connection con = new ConnectionFactory().getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql)){
+
+            stmt.setString(2, elemento.getCodigo());
+            stmt.setString(3, elemento.getTipo_desconto());
+            stmt.setDouble(3, elemento.getValor_minimo_pedido());
+            
+            stmt.setDate(4, Date.valueOf(elemento.getData_validade()));
+            stmt.setBoolean(5, elemento.isAtivo());
+            
+
+            stmt.setTimestamp(6,
+                Timestamp.valueOf(elemento.getData_criacao()));
+
+            stmt.setTimestamp(7,
+                Timestamp.valueOf(elemento.getData_modificacao()));
+
+            stmt.executeUpdate();
+            
+            return elemento;
+
+        } catch(SQLException e){
+            throw new RuntimeException(e);
         }
+        //na verdade deveria retornar o elemento que foi inserido agora
+       
+    }
+    
+    public List<Cupom> getLista() {
+
+        String sql = "select * from Cupom";
+
+        List<Cupom> cupons = new ArrayList<>();
+
+        try (Connection con = new ConnectionFactory().getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while(rs.next()){
+
+                Cupom cupom = new Cupom();
+
+                cupom.setId(rs.getLong("id"));
+
+                cupom.setCodigo(rs.getString("codigo"));
+                cupom.setTipo_desconto(rs.getString("tipo_desconto"));
+                cupom.setValor_minimo_pedido(rs.getDouble("valor_minimo_pedido"));
+
+                cupom.setData_validade(rs.getDate("data_validade").toLocalDate());
+                cupom.setAtivo(rs.getBoolean("ativo"));
+                cupom.setData_criacao(rs.getTimestamp("data_criacao").toLocalDateTime());
+                cupom.setData_modificacao(rs.getTimestamp("data_modificacao").toLocalDateTime());
+                
+                cupons.add(cupom);
+            }
+
+        } catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return cupons;
+    }
+    
+    public Cupom buscarPorId(long id){
+        String sql = "select * from Cupom where id = ?";
+        
+        try (Connection con = new ConnectionFactory().getConnection();
+         PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setLong(1,id);
+                
+            ResultSet rs = stmt.executeQuery();
+                
+            if(rs.next()){
+                Cupom cupom = new Cupom();
+
+                cupom.setId(rs.getLong("id"));
+
+                cupom.setCodigo(rs.getString("codigo"));
+                cupom.setTipo_desconto(rs.getString("tipo_desconto"));
+                cupom.setValor_minimo_pedido(rs.getDouble("valor_minimo_pedido"));
+
+                cupom.setData_validade(rs.getDate("data_validade").toLocalDate());
+                cupom.setAtivo(rs.getBoolean("ativo"));
+                cupom.setData_criacao(rs.getTimestamp("data_criacao").toLocalDateTime());
+                cupom.setData_modificacao(rs.getTimestamp("data_modificacao").toLocalDateTime());
+                
+
+                return cupom;
+            }
+        } catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        
         return null;
     }
     
-    public Cupom buscarPorCodigo(String Codigo) {
-        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
-        for (int i = 0; i < ProximaPosicaoLivre; i++) {
-            if(cupom[i].getCodigo().equals(Codigo))
-                return cupom[i];
+    public Cupom buscarPorCodigo(String codigo){
+        String sql = "select * from Cupom where codigo = ?";
+        
+        try (Connection con = new ConnectionFactory().getConnection();
+         PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setString(1,codigo);
+                
+            ResultSet rs = stmt.executeQuery();
+                
+            if(rs.next()){
+                Cupom cupom = new Cupom();
+
+                cupom.setId(rs.getLong("id"));
+
+                cupom.setCodigo(rs.getString("codigo"));
+                cupom.setTipo_desconto(rs.getString("tipo_desconto"));
+                cupom.setValor_minimo_pedido(rs.getDouble("valor_minimo_pedido"));
+
+                cupom.setData_validade(rs.getDate("data_validade").toLocalDate());
+                cupom.setAtivo(rs.getBoolean("ativo"));
+                cupom.setData_criacao(rs.getTimestamp("data_criacao").toLocalDateTime());
+                cupom.setData_modificacao(rs.getTimestamp("data_modificacao").toLocalDateTime());
+                
+
+                return cupom;
+            }
+        } catch(SQLException e){
+            throw new RuntimeException(e);
         }
+        
         return null;
     }
     
-    public boolean Adicionar(Cupom c)
-    {
-        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
-        if(ProximaPosicaoLivre != -1)
-        {
-            cupom[ProximaPosicaoLivre] = c;
+    
+    public boolean alterar(Cupom cupom) {
+        
+        String sql = "Uptade Cupom" 
+                + "set codigo = ?"
+                + "tipo_desconto = ?"
+                + "valor_minimo_pedido = ?"
+                + "data_validade = ?"
+                + "ativo = ?"
+                + "data_moficacao = ?"
+                + "where id = ?";
+        try(Connection con = new ConnectionFactory().getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql)){
+            
+            stmt.setString(1,
+                cupom.getCodigo());
+
+            stmt.setString(2,
+                cupom.getTipo_desconto());
+
+            stmt.setDouble(3,
+                cupom.getValor_minimo_pedido());
+            
+            stmt.setDate(4,
+                    Date.valueOf(cupom.getData_validade()));
+            
+            stmt.setBoolean(5, cupom.isAtivo()); 
+            
+            stmt.setTimestamp(6,
+                Timestamp.valueOf(cupom.getData_modificacao()));
+
+            stmt.setLong(7,
+                cupom.getId());
             return true;
-        } else {
+            
+        }catch(SQLException e){
             return false;
         }
-    }
-    
-    private int proximaPosicaoLivre() {
-        for (int i = 0; i < cupom.length; i++) {
-            if (cupom[i] == null) {
-                return i;
-            }
-
-        }
-        return -1;
 
     }
     
-    public boolean remover(String codigo) {
-        for (int i = 0; i < cupom.length; i++) {
-            if (cupom[i] != null && cupom[i].getCodigo().equals(codigo)) {
-                cupom[i] = null;
-                return true;
-            }
+    public Cupom Excluir(Cupom cupom){
+        String sql = "delete from Cupom where id = ?";
+        
+        try(Connection con = new ConnectionFactory().getConnection();
+                PreparedStatement stmt = con.prepareStatement(sql)){
+            
+            stmt.setLong(1, cupom.getId());
+            
+            stmt.execute();
+            
+            System.out.println("Cupom excluído");
+            
+        }catch(SQLException e){
+            throw new RuntimeException(e);
         }
-        return false;
-
+        
+        return cupom;
     }
     
-    public void mostrarTodos() {
-        boolean temProdutos = false;
-        for (Cupom c : cupom) {
-            if (c != null) {
-                System.out.println(c);
-                temProdutos = true;
-            }
+    public void Mostrar(){
+        List<Cupom> cupons = getLista();
+        for(Cupom cupom : cupons){
+            System.out.println(cupom.toString());
         }
-        if (!temProdutos) {
-            System.out.println("nao existe Produto cadastrado");
-        }
-    }
-    
-    public boolean alterar(Cupom cupomAtualizado) {
-        for (int i = 0; i < cupom.length; i++) {
-            // Verifica se a posição não é nula e se o ID é igual ao do produto atualizado
-            if (cupom[i] != null && cupom[i].getId() == cupomAtualizado.getId()) {
-                cupom[i] = cupomAtualizado; // Substitui o antigo pelo novo
-                return true;
-            }
-        }
-        return false; // Retorna falso se não encontrou o produto para alterar
     }
 }
