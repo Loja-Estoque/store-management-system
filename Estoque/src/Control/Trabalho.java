@@ -123,7 +123,7 @@ public class Trabalho {
 
                     break;
                 case 3:
-                    produtoDAO.mostrarTodos();
+                    produtoDAO.Mostrar();
                     break;
 
                 default:
@@ -303,7 +303,7 @@ public class Trabalho {
 
                     break;
                 case 2: //alterar
-                    produtoDAO.mostrarTodos();
+                    produtoDAO.Mostrar();
                     System.out.println("Digite o id do produto que deseja alterar:");
                     int idProd = Integer.parseInt(scanner.nextLine());
                     Produto pExistente = produtoDAO.buscarPorId(idProd);
@@ -331,11 +331,12 @@ public class Trabalho {
                     }
                     break;
                 case 3: //remover
-                    produtoDAO.mostrarTodos();
+                    produtoDAO.Mostrar();
                     System.out.println("Digite o nome do produto que deseja alterar:");
                     String nomeP = scanner.nextLine();
+                    Produto temp = produtoDAO.buscarPorNome(nomeP);
 
-                    if (produtoDAO.remover(nomeP)) {
+                    if (produtoDAO.Excluir(temp)!=null) {
                         System.out.println("Produto removido com sucesso!");
                     } else {
                         System.out.println("Produto não encontrado!");
@@ -343,7 +344,7 @@ public class Trabalho {
                     break;
                 case 4:
                     System.out.println("--- RELATÓRIO GERAL DE PRODUTOS ---\n\n");
-                    produtoDAO.mostrarTodos();
+                    produtoDAO.Mostrar();
                     break;
             }
         }
@@ -639,7 +640,7 @@ public class Trabalho {
         do {
 
             System.out.println("Qual item deseja comprar?");
-            produtoDAO.mostrarCompra();
+            produtoDAO.MostrarCompra();
 
             int opP = Integer.parseInt(scanner.nextLine());
 
@@ -696,7 +697,7 @@ public class Trabalho {
         itenspe.setQuantidade(quantidade);
         itenspe.setPreco_unitario(pe.getValor_total() / quantidade);
         itenspe.setSubtotal(pe.getValor_total());
-        itensPedidoDAO.Adicionar(itenspe);
+        itensPedidoDAO.adicionar(itenspe);
 
         return itenspe;
     }

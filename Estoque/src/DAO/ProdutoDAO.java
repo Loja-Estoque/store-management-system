@@ -129,6 +129,41 @@ public class ProdutoDAO {
         return null;
     }
     
+    public Produto buscarPorNome(String nome){
+        String sql = "select * from Produto where nome = ?";
+        
+        try (Connection con = new ConnectionFactory().getConnection();
+         PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setString(1,nome);
+                
+            ResultSet rs = stmt.executeQuery();
+                
+            if(rs.next()){
+                Produto produto = new Produto();
+
+                produto.setId(rs.getLong("id"));
+                
+                produto.setNome(rs.getString("nome"));
+                
+                produto.setDescricao(rs.getString("descricao"));
+                
+                produto.setPreco_venda(rs.getDouble("preco_venda"));
+                
+                produto.setAtivo(rs.getBoolean("ativo"));
+                
+                produto.setData_criacao(rs.getTimestamp("data_criacao").toLocalDateTime());
+                
+                produto.setData_modificacao(rs.getTimestamp("data_modificacao").toLocalDateTime());
+
+                return produto;
+            }
+        } catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        
+        return null;
+    }
+    
     
     public boolean alterar(Produto produto) {
         
@@ -185,6 +220,13 @@ public class ProdutoDAO {
         List<Produto> produtos = getLista();
         for(Produto produto : produtos){
             System.out.println(produto.toString());
+        }
+    }
+    
+    public void MostrarCompra(){
+        List<Produto> produtos = getLista();
+        for(Produto produto : produtos){
+            System.out.println(produto.getId() +" - "+ produto.getNome());
         }
     }
 }
