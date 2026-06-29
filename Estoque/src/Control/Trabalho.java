@@ -24,6 +24,9 @@ import model.Entrega;
 import view.Menu;
 
 import Util.Util;
+import Util.RelatorioPDF;
+import com.itextpdf.text.DocumentException;
+import java.io.IOException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,6 +50,8 @@ public class Trabalho {
     private ItensCarrinhoDAO itensCarrinhoDAO = new ItensCarrinhoDAO();
     private ItensPedidoDAO itensPedidoDAO = new ItensPedidoDAO();
     private CupomDAO cupomDAO = new CupomDAO();
+    
+    private RelatorioPDF relatorio = new RelatorioPDF();
 
     private Carrinho carrinhoAtual = null;
 
@@ -88,7 +93,8 @@ public class Trabalho {
                                         int acao = mn.MenuAdm1(assunto);
 
                                         if (acao != 0) {
-                                            this.executarAcao(assunto, acao);
+                                             this.executarAcao(assunto, acao);
+                                            
                                         }
                                     }
                                 }
@@ -177,7 +183,7 @@ public class Trabalho {
         return u1;
     }
 
-    private void executarAcao(int assunto, int acao) {
+    private void executarAcao(int assunto, int acao) throws DocumentException {
         if (assunto == 1) { // Usuários
             switch (acao) {
                 case 1: //criar
@@ -576,7 +582,124 @@ public class Trabalho {
                     throw new AssertionError();
             }
         }
+        
+        if(assunto == 9)
+        {
+            try{
+                
+            
+                switch(acao){
+
+                case 1:
+
+                    System.out.println("1 - Por período");
+                    System.out.println("2 - Por cliente");
+                    System.out.println("3 - Por status");
+
+                    int opVenda = scanner.nextInt();
+
+                    switch(opVenda){
+
+                        case 1:
+
+                            System.out.print("Data inicial (AAAA-MM-DD): ");
+                            LocalDate inicio = LocalDate.parse(scanner.next());
+
+                            System.out.print("Data final (AAAA-MM-DD): ");
+                            LocalDate fim = LocalDate.parse(scanner.next());
+
+                            relatorio.gerarRelatorioVendasPeriodo(
+                                    pedidoDAO,
+                                    inicio,
+                                    fim);
+
+                            System.out.println("PDF gerado!");
+
+                            break;
+
+                        case 2:
+
+                            usuarioDAO.Mostrar();
+
+                            System.out.print("ID do cliente: ");
+
+                            long id = scanner.nextLong();
+
+                            Usuario usuario =
+                                    usuarioDAO.buscarPorId(id);
+
+                            relatorio.gerarRelatorioPedidosUsuario(
+                                    pedidoDAO,
+                                    usuario);
+
+                            System.out.println("PDF gerado!");
+
+                            break;
+
+                        case 3:
+
+                            System.out.println("CRIADO");
+                            System.out.println("PAGO");
+                            System.out.println("CANCELADO");
+                            System.out.println("ENVIADO");
+                            System.out.println("ENTREGUE");
+
+                            String status = scanner.next();
+
+                            relatorio.gerarRelatorioPedidosStatus(pedidoDAO, status);
+
+                            System.out.println("PDF gerado!");
+
+                            break;
+                    }
+
+                break;
+
+                case 2:
+
+                    relatorio.gerarRelatorioFaturamento(pedidoDAO);
+
+                    System.out.println("Relatório gerado com sucesso!");
+
+                break;
+
+                case 3:
+
+                    System.out.println("1 - Pedidos Criados");
+                    System.out.println("2 - Pedidos Pagos");
+                    System.out.println("3 - Pedidos Cancelados");
+
+                    int opPedido = scanner.nextInt();
+
+                    switch(opPedido){
+
+                        case 1:
+
+                            relatorio.gerarRelatorioPedidosStatus(pedidoDAO,"CRIADO");
+                            break;
+
+                        case 2:
+
+                            relatorio.gerarRelatorioPedidosStatus(pedidoDAO,"PAGO");
+                            break;
+
+                        case 3:
+
+                            relatorio.gerarRelatorioPedidosStatus(pedidoDAO, "CANCELADO");
+                        break;
+                    }
+
+                System.out.println("PDF gerado!");
+
+                break;
+            }
+        }catch (DocumentException | IOException e) {
+
+                System.out.println("Erro ao gerar o relatório.");
+                e.printStackTrace();
+            }
     }
+}
 
     private void gerenciarMenuCliente(Usuario u) {
         int opCliente = -1;

@@ -436,4 +436,94 @@ public class PedidoDAO {
             }
         }
     }
+    
+     public List<Pedido> buscarPorStatus(String status) {
+
+        List<Pedido> lista = new ArrayList<>();
+
+        String sql = "SELECT * FROM Pedido WHERE status = ?";
+
+        try (Connection con = new ConnectionFactory().getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setString(1, status);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+
+                Pedido pedido = new Pedido();
+
+                pedido.setId(rs.getLong("id"));
+
+                UsuarioDAO udao = new UsuarioDAO();
+                pedido.setUsuario(udao.buscarPorId(rs.getLong("fk_usuario")));
+
+                pedido.setStatus(rs.getString("status"));
+                pedido.setValor_total(rs.getDouble("valor_total"));
+                pedido.setForma_pagamento(rs.getString("forma_pagamento"));
+
+                pedido.setData_criacao(
+                        rs.getTimestamp("data_criacao").toLocalDateTime());
+
+                pedido.setData_modificacao(
+                        rs.getTimestamp("data_modificacao").toLocalDateTime());
+
+                lista.add(pedido);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return lista;
+    }
+    
+    public List<Pedido> buscarPorPeriodo(LocalDate inicio, LocalDate fim) {
+
+        List<Pedido> lista = new ArrayList<>();
+
+        String sql = """
+                SELECT *
+                FROM Pedido
+                WHERE DATE(data_criacao)
+                BETWEEN ? AND ?
+                """;
+
+        try (Connection con = new ConnectionFactory().getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setDate(1, java.sql.Date.valueOf(inicio));
+            stmt.setDate(2, java.sql.Date.valueOf(fim));
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+
+                Pedido pedido = new Pedido();
+
+                pedido.setId(rs.getLong("id"));
+
+                UsuarioDAO udao = new UsuarioDAO();
+                pedido.setUsuario(udao.buscarPorId(rs.getLong("fk_usuario")));
+
+                pedido.setStatus(rs.getString("status"));
+                pedido.setValor_total(rs.getDouble("valor_total"));
+                pedido.setForma_pagamento(rs.getString("forma_pagamento"));
+
+                pedido.setData_criacao(
+                        rs.getTimestamp("data_criacao").toLocalDateTime());
+
+                pedido.setData_modificacao(
+                        rs.getTimestamp("data_modificacao").toLocalDateTime());
+
+                lista.add(pedido);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return lista;
+    }
 }

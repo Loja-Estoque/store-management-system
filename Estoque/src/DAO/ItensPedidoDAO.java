@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import model.Cupom;
@@ -22,7 +23,6 @@ import model.Produto;
  * @author Thalita
  */
 public class ItensPedidoDAO {
-    
     public ItensPedido adicionar(ItensPedido elemento) {
         String sql =
         "INSERT INTO Itens_pedido "
@@ -210,4 +210,6 @@ public class ItensPedidoDAO {
             System.out.println(itens.toString());
         }
     }
+    
+   
 }
