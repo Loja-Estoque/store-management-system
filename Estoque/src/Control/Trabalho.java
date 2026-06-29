@@ -93,7 +93,12 @@ public class Trabalho {
                                         int acao = mn.MenuAdm1(assunto);
 
                                         if (acao != 0) {
-                                             this.executarAcao(assunto, acao);
+                                            try {
+                                                this.executarAcao(assunto, acao);
+                                            } catch (DocumentException | IOException e) {
+                                                System.out.println("Erro ao executar a ação.");
+                                                e.printStackTrace();
+                                            }
                                             
                                         }
                                     }
@@ -745,6 +750,14 @@ public class Trabalho {
                 case 5: // Meu Usuário
                     System.out.println("--- SEUS DADOS ---");
                     System.out.println(u);
+                    break;
+                
+                case 7:
+
+                    relatorio.gerarRelatorioPedidosUsuario(pedidoDAO,u);
+
+                    System.out.println("Seu relatório foi gerado!");
+
                     break;
 
                 case 0:

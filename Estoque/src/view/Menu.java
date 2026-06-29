@@ -126,6 +126,7 @@ public class Menu {
         builder.append("3 - Meus Pedidos\n");
         builder.append("4 - Cupons\n");
         builder.append("5 - Meu Usuário\n");
+        builder.append("6 - Gerar meus pedidos\n");
         builder.append("Qual opcao deseja: ");
 
         System.out.println(builder.toString());
