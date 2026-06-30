@@ -4,8 +4,18 @@
  */
 package DAO;
 
+import connection.ConnectionFactory;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import model.Carrinho;
+
+import model.Usuario;
 
 /**
  *
@@ -13,86 +23,179 @@ import model.Carrinho;
  */
 public class CarrinhoDAO {
     
-    Carrinho[] carrinho = new Carrinho[5];
-    
-     public Carrinho buscarPorId(int id) {
-        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
-        for (int i = 0; i < ProximaPosicaoLivre; i++) {
-            if(carrinho[i].getId() == id)
-                return carrinho[i];
+      public Carrinho adicionar(Carrinho elemento) {
+        String sql =
+        "INSERT INTO Usuario "
+        + "(fk_usuario, status, data_criacao, data_modificacao)"
+        + " VALUES (?,?,?,?)";
+
+        try(Connection con = new ConnectionFactory().getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql)){
+
+            stmt.setLong(1, elemento.getUsuario().getId());
+            stmt.setString(2, elemento.getStatus());
+
+            stmt.setTimestamp(3,
+                Timestamp.valueOf(elemento.getData_criacao()));
+
+            stmt.setTimestamp(4,
+                Timestamp.valueOf(elemento.getData_modificacao()));
+
+            stmt.executeUpdate();
+
+        } catch(SQLException e){
+            throw new RuntimeException(e);
         }
+        //na verdade deveria retornar o elemento que foi inserido agora
+        return elemento;
+    }
+    
+    public List<Carrinho> getLista() {
+
+        String sql = "select * from Carrinho";
+
+        List<Carrinho> carrinhos = new ArrayList<>();
+
+        try (Connection con = new ConnectionFactory().getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while(rs.next()){
+
+                Carrinho carrinho = new Carrinho();
+
+                carrinho.setId(rs.getLong("id"));
+
+                UsuarioDAO dao = new UsuarioDAO();
+
+                Usuario usuario =
+                        dao.buscarPorId(rs.getLong("fk_usuario"));
+
+                carrinho.setUsuario(usuario);
+
+                carrinho.setStatus(rs.getString("status"));
+                
+                carrinho.setData_criacao(rs.getTimestamp("data_criacao").toLocalDateTime());
+
+                carrinho.setData_modificacao(rs.getTimestamp("data_modificacao").toLocalDateTime());
+
+           
+
+                carrinhos.add(carrinho);
+
+            }
+
+        } catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return carrinhos;
+    }
+    
+    public Carrinho buscarPorId(long id){
+        String sql = "select * from Carrinho where id = ?";
+        
+        try (Connection con = new ConnectionFactory().getConnection();
+         PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setLong(1,id);
+                
+            ResultSet rs = stmt.executeQuery();
+                
+            if(rs.next()){
+                Carrinho carrinho = new Carrinho();
+                    
+                carrinho.setId(rs.getLong("id"));
+                
+                long idUsuario = rs.getLong("fk_usuario");
+                
+                UsuarioDAO dao = new UsuarioDAO();
+                
+                Usuario usuario = dao.buscarPorId(idUsuario);
+                
+                carrinho.setUsuario(usuario);
+                    
+                carrinho.setStatus(rs.getString("status"));
+
+                carrinho.setData_criacao(rs.getTimestamp("data_criacao").toLocalDateTime());
+
+                carrinho.setData_modificacao(rs.getTimestamp("data_modificacao").toLocalDateTime());
+
+                return carrinho;
+            }
+        } catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        
         return null;
     }
-    
-    public boolean Adicionar(Carrinho c)
-    {
-        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
-        if(ProximaPosicaoLivre != -1)
-        {
-            carrinho[ProximaPosicaoLivre] = c;
+
+    public boolean alterar(Carrinho carrinho) {
+        
+        String sql = "Uptade Carrinho" 
+                + "set fk_usuario = ?"
+                + "status = ?"
+                + "data_moficacao = ?"
+                + "where id = ?";
+        try(Connection con = new ConnectionFactory().getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql)){
+            
+            stmt.setLong(1,
+                carrinho.getUsuario().getId());
+
+            stmt.setString(2,
+                carrinho.getStatus());
+
+            stmt.setTimestamp(3,
+                Timestamp.valueOf(carrinho.getData_modificacao()));
+
+            stmt.setLong(4,
+                carrinho.getId());
             return true;
-        } else {
+            
+        }catch(SQLException e){
             return false;
         }
-    }
-    
-    private int proximaPosicaoLivre() {
-        for (int i = 0; i < carrinho.length; i++) {
-            if (carrinho[i] == null) {
-                return i;
-            }
-
-        }
-        return -1;
 
     }
     
-    public void mostrarTodos() {
-        boolean temProdutos = false;
-        for (Carrinho c : carrinho) {
-            if (c != null) {
-                System.out.println(c);
-                temProdutos = true;
-            }
+    public Carrinho Excluir(Carrinho carrinho){
+        String sql = "delete from Carrinho where id = ?";
+        
+        try(Connection con = new ConnectionFactory().getConnection();
+                PreparedStatement stmt = con.prepareStatement(sql)){
+            
+            stmt.setLong(1, carrinho.getId());
+            
+            stmt.execute();
+            
+            System.out.println("Carrinho excluído");
+            
+        }catch(SQLException e){
+            throw new RuntimeException(e);
         }
-        if (!temProdutos) {
-            System.out.println("nao existe Produto cadastrado");
-        }
+        
+        return carrinho;
     }
     
-    /*public boolean remover(String nome) {
-        for (int i = 0; i < carrinho.length; i++) {
-            if (carrinho[i] != null && carrinho[i].getPedido().equals(nome)) {
-                carrinho[i] = null;
-                return true;
-            }
+    public void Mostrar(){
+        List<Carrinho> carrinhos = getLista();
+        for(Carrinho carrinho : carrinhos){
+            System.out.println(carrinho.toString());
         }
-        return false;
-
-    }*/
-    
-    public boolean alterar(Carrinho carrinhoAtualizado) {
-        for (int i = 0; i < carrinho.length; i++) {
-            // Verifica se a posição não é nula e se o ID é igual ao do produto atualizado
-            if (carrinho[i] != null && carrinho[i].getId() == carrinhoAtualizado.getId()) {
-                carrinho[i] = carrinhoAtualizado; // Substitui o antigo pelo novo
-                return true;
-            }
-        }
-        return false; // Retorna falso se não encontrou o produto para alterar
     }
     
     
     public void verificarCarrinhosExpirados(LocalDateTime agoraSimulado) {
-        for (int i = 0; i < carrinho.length; i++) {
-            if (carrinho[i] != null && carrinho[i].getStatus().equals("ABERTO")) {
+        List<Carrinho> carrinhos = getLista();
+        for (Carrinho carrinho : carrinhos) {
+            if (carrinho != null && carrinho.getStatus().equals("ABERTO")) {
                 // Calcula a diferença entre a criação e o tempo atual
-                long horas = java.time.Duration.between(carrinho[i].getData_criacao(), agoraSimulado).toHours();
+                long horas = java.time.Duration.between(carrinho.getData_criacao(), agoraSimulado).toHours();
 
                 if (horas >= 24) {
-                    carrinho[i].setStatus("EXPIRADO");
-                    carrinho[i].setData_modificacao(agoraSimulado);
-                    System.out.println("Carrinho ID " + carrinho[i].getId() + " expirou por tempo.");
+                    carrinho.setStatus("EXPIRADO");
+                    carrinho.setData_modificacao(agoraSimulado);
+                    System.out.println("Carrinho ID " + carrinho.getId() + " expirou por tempo.");
                 }
             }
         }

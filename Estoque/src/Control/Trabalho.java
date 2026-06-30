@@ -844,7 +844,7 @@ public class Trabalho {
             this.carrinhoAtual = new Carrinho();
             this.carrinhoAtual.setUsuario(logado);
             this.carrinhoAtual.setStatus("ABERTO");
-            carrinhoDAO.Adicionar(carrinhoAtual);
+            carrinhoDAO.adicionar(carrinhoAtual);
 
         }
     }
