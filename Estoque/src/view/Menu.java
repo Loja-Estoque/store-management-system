@@ -56,6 +56,8 @@ public class Menu {
         builder.append("6 - Entrega\n");
         builder.append("7 - Estoque\n");
         builder.append("8 - Calendário\n");
+        builder.append("9 - Relatórios\n");
+
         builder.append("Qual opcao deseja: ");
 
         System.out.println(builder.toString());
@@ -95,6 +97,13 @@ public class Menu {
                 builder.append("1 - Avançar dias\n");
                 builder.append("2 - Ver data atual\n");
                 break;
+            case 9:
+                builder.append("========== RELATÓRIOS ==========\n");
+                builder.append("0 - Voltar\n");
+                builder.append("1 - Relatório de Vendas\n");
+                builder.append("2 - Relatório de Faturamento\n");
+                builder.append("3 - Relatório de Pedidos\n");
+                break;
             default:
                 builder.append("0 - Para sair do programa\n");
                 builder.append("1 - Criar\n");
@@ -117,6 +126,7 @@ public class Menu {
         builder.append("3 - Meus Pedidos\n");
         builder.append("4 - Cupons\n");
         builder.append("5 - Meu Usuário\n");
+        builder.append("6 - Gerar meus pedidos\n");
         builder.append("Qual opcao deseja: ");
 
         System.out.println(builder.toString());

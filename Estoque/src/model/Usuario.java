@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Usuario {
-    private static long serial;
     private long id;
     private Pessoa pessoa;
     private String login;
@@ -18,17 +17,9 @@ public class Usuario {
     private LocalDateTime data_modificacao;
     
     //construtor
-    public Usuario(Pessoa pessoa,String login,String senha,LocalDateTime data_criacao,LocalDateTime data_modificacao) {
-        this.id = ++Usuario.serial;
-        this.pessoa = pessoa;
-        this.login = login;
-        this.senha = senha;
-        this.data_criacao = data_criacao;
-        this.data_modificacao = data_modificacao;
-    }
+
     public Usuario()
     {
-        this.id = ++Usuario.serial;
         
         this.data_criacao = Util.getAgora();
         
@@ -38,6 +29,12 @@ public class Usuario {
     public long getId(){
         return id;
     }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+    
+    
         
     public Pessoa getPessoa(){
         return pessoa;
@@ -69,6 +66,14 @@ public class Usuario {
     public LocalDateTime getData_criacao() {
         return data_criacao;
     } 
+
+    public void setData_criacao(LocalDateTime data_criacao) {
+        this.data_criacao = data_criacao;
+    }
+
+    public void setData_modificacao(LocalDateTime data_modificacao) {
+        this.data_modificacao = data_modificacao;
+    }
     
     
     public LocalDateTime getData_modificacao() {

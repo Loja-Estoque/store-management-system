@@ -8,7 +8,6 @@ import Util.Util;
 import java.time.LocalDateTime;
 
 public class Produto {
-    private static long serial;
     private long id;
     private String nome;
     private String descricao;
@@ -20,7 +19,6 @@ public class Produto {
     private LocalDateTime data_modificacao;
     
     public Produto (String nome, String descricao, double preco_venda, LocalDateTime data_criacao,LocalDateTime data_modificacao) {
-        this.id = ++Produto.serial;
         this.nome = nome;
         this.descricao = descricao;
         this.preco_venda = preco_venda;
@@ -30,7 +28,6 @@ public class Produto {
     
     public Produto()
     {
-        this.id = ++Produto.serial;
         
         this.data_criacao = Util.getAgora();
         this.data_modificacao = Util.getAgora();
@@ -70,6 +67,16 @@ public class Produto {
     public LocalDateTime getData_modificacao() {
         return data_modificacao;
     }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setData_modificacao(LocalDateTime data_modificacao) {
+        this.data_modificacao = data_modificacao;
+    }
+    
+    
 
     public void setNome(String nome) {
         this.nome = nome;

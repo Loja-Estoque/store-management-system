@@ -8,7 +8,6 @@ import Util.Util;
 import java.time.LocalDateTime;
 
 public class Pedido {
-    private static long serial;
     private long id;
     private Usuario usuario;
     private Cupom cupom;
@@ -19,7 +18,6 @@ public class Pedido {
     private LocalDateTime data_modificacao;
     
     public Pedido(long id_usuario, String status, double valor_total, String forma_pagamento, LocalDateTime data_criacao, LocalDateTime data_modificacao) {
-        this.id = ++Pedido.serial;
         this.status = status;
         this.valor_total = valor_total;
         this.forma_pagamento = forma_pagamento;
@@ -29,7 +27,6 @@ public class Pedido {
     
     public Pedido()
     {
-        this.id = ++Pedido.serial;
         
         this.data_criacao = Util.getAgora();
         this.data_modificacao = Util.getAgora();
@@ -37,6 +34,22 @@ public class Pedido {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public void setData_criacao(LocalDateTime data_criacao) {
+        this.data_criacao = data_criacao;
+    }
+
+    public void setData_modificacao(LocalDateTime data_modificacao) {
+        this.data_modificacao = data_modificacao;
     }
 
     public Usuario getUsuario() {

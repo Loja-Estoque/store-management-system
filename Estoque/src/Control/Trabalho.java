@@ -24,6 +24,9 @@ import model.Entrega;
 import view.Menu;
 
 import Util.Util;
+import Util.RelatorioPDF;
+import com.itextpdf.text.DocumentException;
+import java.io.IOException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,7 +41,7 @@ import model.ItensCarrinho;
 public class Trabalho {
 
     private PessoaDAO pessoaDAO = new PessoaDAO();
-    private UsuarioDAO usuarioDAO = new UsuarioDAO(pessoaDAO);
+    private UsuarioDAO usuarioDAO = new UsuarioDAO();
     private ProdutoDAO produtoDAO = new ProdutoDAO();
     private MovimentacaoEstoqueDAO MovimentacaoDAO = new MovimentacaoEstoqueDAO(produtoDAO);
     private PedidoDAO pedidoDAO = new PedidoDAO();
@@ -47,6 +50,8 @@ public class Trabalho {
     private ItensCarrinhoDAO itensCarrinhoDAO = new ItensCarrinhoDAO();
     private ItensPedidoDAO itensPedidoDAO = new ItensPedidoDAO();
     private CupomDAO cupomDAO = new CupomDAO();
+    
+    private RelatorioPDF relatorio = new RelatorioPDF();
 
     private Carrinho carrinhoAtual = null;
 
@@ -69,32 +74,41 @@ public class Trabalho {
                     String login = scanner.nextLine();
                     System.out.println("Senha: ");
                     String senha = scanner.nextLine();
-                    Usuario logado = usuarioDAO.buscaUsuarioLogin(login, senha);
+                    Usuario logado = usuarioDAO.buscarPorLogin(login);
 
                     if (logado != null) {
+                        
+                        if(logado.getSenha().equals(senha)){
 
-                        if ("Administrador".equals(logado.getLogin())) {
-                            System.out.println("Usuario Administrador logado");
+                            if ("Administrador".equals(logado.getLogin())) {
+                                System.out.println("Usuario Administrador logado");
 
-                            //System.out.println("Prox Menu");
-                            int assunto = -1;
+                                //System.out.println("Prox Menu");
+                                int assunto = -1;
 
-                            while (assunto != 0) {
-                                assunto = mn.MenuAdm();
+                                while (assunto != 0) {
+                                    assunto = mn.MenuAdm();
 
-                                if (assunto != 0) {
-                                    int acao = mn.MenuAdm1(assunto);
+                                    if (assunto != 0) {
+                                        int acao = mn.MenuAdm1(assunto);
 
-                                    if (acao != 0) {
-                                        this.executarAcao(assunto, acao);
+                                        if (acao != 0) {
+                                            try {
+                                                this.executarAcao(assunto, acao);
+                                            } catch (DocumentException | IOException e) {
+                                                System.out.println("Erro ao executar a ação.");
+                                                e.printStackTrace();
+                                            }
+                                            
+                                        }
                                     }
                                 }
-                            }
-                        } else {
-                            System.out.println("Usuario comum logado");
-                            //Comprar(logado);
-                            this.gerenciarMenuCliente(logado);
+                            } else {
+                                System.out.println("Usuario comum logado");
+                                //Comprar(logado);
+                                this.gerenciarMenuCliente(logado);
 
+                            }
                         }
 
                         //loop adm ou comum
@@ -105,10 +119,10 @@ public class Trabalho {
                     break;
                 case 2:
                     Pessoa temp = this.criaPessoa();
-                    if (pessoaDAO.adicionar(temp)) {
+                    if( pessoaDAO.adicionar(temp) != null ) {
                         System.out.println("Pessoa adicionada com sucesso");
                         Usuario tempu = this.criaUsuario(temp);
-                        if (usuarioDAO.Adicionar(tempu)) {
+                        if (usuarioDAO.adicionar(tempu) != null) {
                             System.out.println("Usuario adicionado com sucesso");
                         } else {
                             System.out.println("Usuario nao adicionado");
@@ -120,7 +134,7 @@ public class Trabalho {
 
                     break;
                 case 3:
-                    produtoDAO.mostrarTodos();
+                    produtoDAO.Mostrar();
                     break;
 
                 default:
@@ -161,8 +175,9 @@ public class Trabalho {
 
     private Usuario criaUsuario(Pessoa p) {
         Usuario u1 = new Usuario();
-
-        u1.setPessoa(p);
+        
+        Pessoa pessoaBanco = pessoaDAO.buscarDocumento(p.getDocumento());
+        u1.setPessoa(pessoaBanco);
 
         System.out.println("Informe seu login: ");
         u1.setLogin(scanner.nextLine());
@@ -173,7 +188,7 @@ public class Trabalho {
         return u1;
     }
 
-    private void executarAcao(int assunto, int acao) {
+    private void executarAcao(int assunto, int acao) throws DocumentException {
         if (assunto == 1) { // Usuários
             switch (acao) {
                 case 1: //criar
@@ -181,7 +196,7 @@ public class Trabalho {
                     pessoaDAO.adicionar(p);
 
                     Usuario u = criaUsuario(p);
-                    usuarioDAO.Adicionar(u);
+                    usuarioDAO.adicionar(u);
 
                     System.out.println("Usuário criado com sucesso!");
                     break;
@@ -190,31 +205,37 @@ public class Trabalho {
                     String loginA = scanner.nextLine();
                     String senhaA = scanner.nextLine();
 
-                    Usuario usuarioExistente = usuarioDAO.buscaUsuarioLogin(loginA, senhaA);
+                    Usuario usuarioExistente = usuarioDAO.buscarPorLogin(loginA);
+                    if(usuarioExistente.getSenha().equals(senhaA)){
+                        if (usuarioExistente != null) {
+                            System.out.println("Informe o NOVO login: ");
+                            String novoLogin = scanner.nextLine();
+                            System.out.println("Informe a NOVA senha: ");
+                            String novaSenha = scanner.nextLine();
 
-                    if (usuarioExistente != null) {
-                        System.out.println("Informe o NOVO login: ");
-                        String novoLogin = scanner.nextLine();
-                        System.out.println("Informe a NOVA senha: ");
-                        String novaSenha = scanner.nextLine();
+                            usuarioExistente.setLogin(novoLogin);
+                            usuarioExistente.setSenha(novaSenha);
 
-                        usuarioExistente.setLogin(novoLogin);
-                        usuarioExistente.setSenha(novaSenha);
-
-                        if (usuarioDAO.alterar(usuarioExistente)) {
-                            System.out.println("Usuário removido com sucesso!");
+                            if (usuarioDAO.alterar(usuarioExistente)) {
+                                System.out.println("Usuário alterado com sucesso!");
+                            } else {
+                                System.out.println("Erro ao salvar alterações.");
+                            }
                         } else {
-                            System.out.println("Erro ao salvar alterações.");
+                            System.out.println("Usuário não encontrado.");
                         }
-                    } else {
-                        System.out.println("Usuário não encontrado.");
+                    } else{
+                        System.out.println("Senha incorreta.");
                     }
+
+                    
                     break;
                 case 3: //deletar
                     System.out.println("Digite o Login do usuário que deseja remover:");
                     String login = scanner.nextLine();
+                    Usuario temp = usuarioDAO.buscarPorLogin(login);
 
-                    if (usuarioDAO.remover(login)) {
+                    if (usuarioDAO.Excluir(temp) != null) {
                         System.out.println("Usuário removido com sucesso!");
                     } else {
                         System.out.println("Usuário não encontrado.");
@@ -222,7 +243,7 @@ public class Trabalho {
                     break;
                 case 4: //mostrar relatório
                     System.out.println("--- RELATÓRIO GERAL DE USUARIOS ---\n\n");
-                    usuarioDAO.mostrarTodos();
+                    usuarioDAO.Mostrar();
                     break;
             }
         }
@@ -244,9 +265,6 @@ public class Trabalho {
                         System.out.print("Informe o NOVO nome: ");
                         pExistente.setNome(scanner.nextLine());
 
-                        if (pessoaDAO.alterar(pExistente)) {
-                            System.out.println("Dados da pessoa atualizados!");
-                        }
                     } else {
                         System.out.println("Pessoa não encontrada!");
                     }
@@ -254,8 +272,8 @@ public class Trabalho {
                 case 3:
                     System.out.println("Digite o documento da pessoa que deseja remover:");
                     String docD = scanner.nextLine();
-
-                    if (pessoaDAO.remove(docD)) {
+                    Pessoa temp = pessoaDAO.buscarDocumento(docD);
+                    if (pessoaDAO.Excluir(temp) != null) {
                         System.out.println("Pessoa removida com sucesso!");
                     } else {
                         System.out.println("Pessoa não encontrada!");
@@ -263,7 +281,7 @@ public class Trabalho {
                     break;
                 case 4:
                     System.out.println("--- RELATÓRIO GERAL DE PESSOAS ---\n\n");
-                    pessoaDAO.mostrarTodos();
+                    pessoaDAO.Mostrar();
                     break;
             }
         }
@@ -296,7 +314,7 @@ public class Trabalho {
 
                     break;
                 case 2: //alterar
-                    produtoDAO.mostrarTodos();
+                    produtoDAO.Mostrar();
                     System.out.println("Digite o id do produto que deseja alterar:");
                     int idProd = Integer.parseInt(scanner.nextLine());
                     Produto pExistente = produtoDAO.buscarPorId(idProd);
@@ -324,11 +342,12 @@ public class Trabalho {
                     }
                     break;
                 case 3: //remover
-                    produtoDAO.mostrarTodos();
+                    produtoDAO.Mostrar();
                     System.out.println("Digite o nome do produto que deseja alterar:");
                     String nomeP = scanner.nextLine();
+                    Produto temp = produtoDAO.buscarPorNome(nomeP);
 
-                    if (produtoDAO.remover(nomeP)) {
+                    if (produtoDAO.Excluir(temp)!=null) {
                         System.out.println("Produto removido com sucesso!");
                     } else {
                         System.out.println("Produto não encontrado!");
@@ -336,7 +355,7 @@ public class Trabalho {
                     break;
                 case 4:
                     System.out.println("--- RELATÓRIO GERAL DE PRODUTOS ---\n\n");
-                    produtoDAO.mostrarTodos();
+                    produtoDAO.Mostrar();
                     break;
             }
         }
@@ -365,14 +384,14 @@ public class Trabalho {
 
                     Cupom novoCupom = new Cupom(cod, tipo, valDesc, valMin, validade, Util.getAgora(), Util.getAgora());
 
-                    if (cupomDAO.Adicionar(novoCupom)) {
+                    if (cupomDAO.adicionar(novoCupom)!=null) {
                         System.out.println("Cupom cadastrado com sucesso!");
                     } else {
                         System.out.println("Erro: Não foi possível cadastrar seu cupom.");
                     }
                     break;
                 case 2: //alterar
-                    cupomDAO.mostrarTodos();
+                    cupomDAO.Mostrar();
                     System.out.print("Digite o ID do cupom que deseja alterar: ");
                     int idAlt = Integer.parseInt(scanner.nextLine());
                     Cupom cupomExistente = cupomDAO.buscarPorId(idAlt);
@@ -398,18 +417,19 @@ public class Trabalho {
                     }
                     break;
                 case 3: //remover
-                    cupomDAO.mostrarTodos();
+                    cupomDAO.Mostrar();
                     System.out.println("Digite o Codigo do cupom que deseja remover:");
                     String nomeC = scanner.nextLine();
+                    Cupom temp = cupomDAO.buscarPorCodigo(nomeC);
 
-                    if (cupomDAO.remover(nomeC)) {
+                    if (cupomDAO.Excluir(temp)!=null) {
                         System.out.println("Cupom removido com sucesso!");
                     } else {
                         System.out.println("Cupom não encontrado!");
                     }
                     break;
                 case 4: //relatório
-                    cupomDAO.mostrarTodos();
+                    cupomDAO.Mostrar();
                     break;
             }
         }
@@ -437,9 +457,9 @@ public class Trabalho {
                 case 3: //relatório de faturamento
                     System.out.println("--- RELATÓRIO DE FATURAMENTO ---");
                     LocalDateTime agora = Util.getAgora();
-                    double faturamentoD = pedidoDAO.calcularFaturamentoDiario(agora);
-                    double faturamentoM = pedidoDAO.calcularFaturamentoMensal(agora);
-                    double faturamentoA = pedidoDAO.calcularFaturamentoAnual(agora);
+                    double faturamentoD = pedidoDAO.calcularFaturamentoDiario(agora.toLocalDate());
+                    double faturamentoM = pedidoDAO.calcularFaturamentoMensal(agora.toLocalDate());
+                    double faturamentoA = pedidoDAO.calcularFaturamentoAnual(agora.toLocalDate());
                     double faturamento = pedidoDAO.calcularFaturamentoTotal();
 
                     System.out.println("Data da Consulta: " + agora);
@@ -451,7 +471,7 @@ public class Trabalho {
                     break;
                 case 4:
                     System.out.println("--- LISTAGEM GERAL DE PEDIDOS ---");
-                    pedidoDAO.mostrarTodos();
+                    pedidoDAO.Mostrar();
                     break;
             }
         }
@@ -567,7 +587,124 @@ public class Trabalho {
                     throw new AssertionError();
             }
         }
+        
+        if(assunto == 9)
+        {
+            try{
+                
+            
+                switch(acao){
+
+                case 1:
+
+                    System.out.println("1 - Por período");
+                    System.out.println("2 - Por cliente");
+                    System.out.println("3 - Por status");
+
+                    int opVenda = scanner.nextInt();
+
+                    switch(opVenda){
+
+                        case 1:
+
+                            System.out.print("Data inicial (AAAA-MM-DD): ");
+                            LocalDate inicio = LocalDate.parse(scanner.next());
+
+                            System.out.print("Data final (AAAA-MM-DD): ");
+                            LocalDate fim = LocalDate.parse(scanner.next());
+
+                            relatorio.gerarRelatorioVendasPeriodo(
+                                    pedidoDAO,
+                                    inicio,
+                                    fim);
+
+                            System.out.println("PDF gerado!");
+
+                            break;
+
+                        case 2:
+
+                            usuarioDAO.Mostrar();
+
+                            System.out.print("ID do cliente: ");
+
+                            long id = scanner.nextLong();
+
+                            Usuario usuario =
+                                    usuarioDAO.buscarPorId(id);
+
+                            relatorio.gerarRelatorioPedidosUsuario(
+                                    pedidoDAO,
+                                    usuario);
+
+                            System.out.println("PDF gerado!");
+
+                            break;
+
+                        case 3:
+
+                            System.out.println("CRIADO");
+                            System.out.println("PAGO");
+                            System.out.println("CANCELADO");
+                            System.out.println("ENVIADO");
+                            System.out.println("ENTREGUE");
+
+                            String status = scanner.next();
+
+                            relatorio.gerarRelatorioPedidosStatus(pedidoDAO, status);
+
+                            System.out.println("PDF gerado!");
+
+                            break;
+                    }
+
+                break;
+
+                case 2:
+
+                    relatorio.gerarRelatorioFaturamento(pedidoDAO);
+
+                    System.out.println("Relatório gerado com sucesso!");
+
+                break;
+
+                case 3:
+
+                    System.out.println("1 - Pedidos Criados");
+                    System.out.println("2 - Pedidos Pagos");
+                    System.out.println("3 - Pedidos Cancelados");
+
+                    int opPedido = scanner.nextInt();
+
+                    switch(opPedido){
+
+                        case 1:
+
+                            relatorio.gerarRelatorioPedidosStatus(pedidoDAO,"CRIADO");
+                            break;
+
+                        case 2:
+
+                            relatorio.gerarRelatorioPedidosStatus(pedidoDAO,"PAGO");
+                            break;
+
+                        case 3:
+
+                            relatorio.gerarRelatorioPedidosStatus(pedidoDAO, "CANCELADO");
+                        break;
+                    }
+
+                System.out.println("PDF gerado!");
+
+                break;
+            }
+        }catch (DocumentException | IOException e) {
+
+                System.out.println("Erro ao gerar o relatório.");
+                e.printStackTrace();
+            }
     }
+}
 
     private void gerenciarMenuCliente(Usuario u) {
         int opCliente = -1;
@@ -607,12 +744,20 @@ public class Trabalho {
 
                 case 4: // Cupons
                     System.out.println("--- CUPONS DISPONÍVEIS ---");
-                    cupomDAO.mostrarTodos();
+                    cupomDAO.Mostrar();
                     break;
 
                 case 5: // Meu Usuário
                     System.out.println("--- SEUS DADOS ---");
                     System.out.println(u);
+                    break;
+                
+                case 7:
+
+                    relatorio.gerarRelatorioPedidosUsuario(pedidoDAO,u);
+
+                    System.out.println("Seu relatório foi gerado!");
+
                     break;
 
                 case 0:
@@ -631,7 +776,7 @@ public class Trabalho {
         do {
 
             System.out.println("Qual item deseja comprar?");
-            produtoDAO.mostrarCompra();
+            produtoDAO.MostrarCompra();
 
             int opP = Integer.parseInt(scanner.nextLine());
 
@@ -688,7 +833,7 @@ public class Trabalho {
         itenspe.setQuantidade(quantidade);
         itenspe.setPreco_unitario(pe.getValor_total() / quantidade);
         itenspe.setSubtotal(pe.getValor_total());
-        itensPedidoDAO.Adicionar(itenspe);
+        itensPedidoDAO.adicionar(itenspe);
 
         return itenspe;
     }
@@ -765,7 +910,7 @@ public class Trabalho {
             novoPedido.setForma_pagamento(scanner.nextLine());
             novoPedido.setStatus("PAGO");
 
-            if (pedidoDAO.adicionar(novoPedido)) {
+            if (pedidoDAO.adicionar(novoPedido)!=null ) {
             System.out.println("Pedido realizado com sucesso");
 
             this.CriarItensPedido(novoPedido, temp, qnt);

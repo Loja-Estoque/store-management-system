@@ -8,7 +8,6 @@ import Util.Util;
 import java.time.LocalDateTime;
 
 public class ItensPedido {
-    private static long serial;
     private long id;
     private Pedido pedido;
     private Produto produto;
@@ -28,9 +27,7 @@ public class ItensPedido {
     }
     
     public ItensPedido()
-    {
-         this.id = ++ItensPedido.serial;
-        
+    {     
         this.data_criacao = Util.getAgora();
         this.data_modificacao = Util.getAgora();
     }
@@ -65,6 +62,22 @@ public class ItensPedido {
 
     public LocalDateTime getData_modificacao() {
         return data_modificacao;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
+    }
+
+    public void setProduto(Produto produto) {
+        this.produto = produto;
+    }
+
+    public void setData_criacao(LocalDateTime data_criacao) {
+        this.data_criacao = data_criacao;
     }
 
     public void setId_pedido(Pedido pedido) {

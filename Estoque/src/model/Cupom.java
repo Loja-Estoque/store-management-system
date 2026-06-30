@@ -9,18 +9,17 @@ import java.time.LocalDateTime;
 import Util.Util;
 
 public class Cupom {
-    private static long serial;
     private long id;
     private String codigo;
     private String tipo_desconto;
     private double valor_desconto;
     private double valor_minimo_pedido;
+    private boolean ativo;
     private LocalDate data_validade;
     private LocalDateTime data_criacao;
     private LocalDateTime data_modificacao;
     
     public Cupom(String codigo, String tipo_desconto, double valor_desconto, double valor_minimo_pedido, LocalDate data_validade, LocalDateTime data_criacao, LocalDateTime data_modificacao) {
-        this.id = ++Cupom.serial;
         this.codigo = codigo;
         this.tipo_desconto = tipo_desconto;
         this.valor_desconto = valor_desconto;
@@ -32,8 +31,7 @@ public class Cupom {
     
     public Cupom()
     {
-        this.id = ++Cupom.serial;
-        
+        this.ativo = true;
         this.data_criacao = LocalDateTime.now();
         this.data_modificacao = LocalDateTime.now();
     }
@@ -42,6 +40,27 @@ public class Cupom {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setData_criacao(LocalDateTime data_criacao) {
+        this.data_criacao = data_criacao;
+    }
+
+    public void setData_modificacao(LocalDateTime data_modificacao) {
+        this.data_modificacao = data_modificacao;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    
     public String getCodigo() {
         return codigo;
     }

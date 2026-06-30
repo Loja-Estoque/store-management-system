@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Pessoa {
-    private static long serial;
     private long id;
     private String nome;
     private LocalDate nascimento;
@@ -17,19 +16,9 @@ public class Pessoa {
     private LocalDateTime data_criacao;
     private LocalDateTime data_modificacao;
     
-    //construtor
-    /*public Pessoa (String nome, LocalDate nascimento, String documento,LocalDateTime data_criacao,LocalDateTime data_modificacao) {
-        this.id = ++Pessoa.serial;
-        this.nome = nome;
-        this.nascimento = nascimento;
-        this.documento = documento;
-        this.data_criacao = data_criacao;
-        this.data_modificacao = data_modificacao;
-    }*/
     
     public Pessoa()
     {
-        this.id = ++Pessoa.serial;
          
         this.data_criacao = Util.getAgora();
         this.data_modificacao = Util.getAgora();
@@ -38,6 +27,12 @@ public class Pessoa {
     public long getId(){
         return id;
     }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+    
+    
        
     public String getNome() {
         return nome;
