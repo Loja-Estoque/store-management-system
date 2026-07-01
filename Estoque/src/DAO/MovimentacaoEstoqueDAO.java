@@ -4,130 +4,134 @@
  */
 package DAO;
 
+import Util.Util;
+import connection.ConnectionFactory;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import model.MovimentacaoEstoque;
 import model.Produto;
 
-import DAO.ProdutoDAO;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-/**
- *
- * @author W10
- */
 public class MovimentacaoEstoqueDAO {
-    MovimentacaoEstoque[] Me = new MovimentacaoEstoque[10];
-   
-    public MovimentacaoEstoqueDAO(ProdutoDAO produtoDAO)
-    {
-        Produto p1 = produtoDAO.buscarPorId(1);
-        Produto p2 = produtoDAO.buscarPorId(2);
-        Produto p3 = produtoDAO.buscarPorId(3);
-        Produto p4 = produtoDAO.buscarPorId(4);
-        
-        MovimentacaoEstoque m1 = new MovimentacaoEstoque();
-        m1.setProduto(p1);
-        m1.setQuantidade(100);
-        m1.setTipo("ENTRADA");
-        m1.setValor_unitario(p1.getPreco_venda());
-        this.Adicionar(m1);
-        
-        MovimentacaoEstoque m2 = new MovimentacaoEstoque();
-        m2.setProduto(p2);
-        m2.setQuantidade(80);
-        m2.setTipo("ENTRADA");
-        m2.setValor_unitario(p2.getPreco_venda());
-        this.Adicionar(m2);
-        
-        MovimentacaoEstoque m3 = new MovimentacaoEstoque();
-        m3.setProduto(p3);
-        m3.setQuantidade(40);
-        m3.setTipo("ENTRADA");
-        m3.setValor_unitario(p3.getPreco_venda());
-        this.Adicionar(m3);
+    public MovimentacaoEstoqueDAO(ProdutoDAO produtoDAO) {
         
     }
-    
-     public MovimentacaoEstoque buscarPorId(long id) {
-         int ProximaPosicaoLivre = this.proximaPosicaoLivre();
-        for (int i = 0; i < ProximaPosicaoLivre; i++) {
-            if(Me[i].getId() == id)
-                return Me[i];
-        }
-        return null;
-    }
-    
-    public boolean Adicionar(MovimentacaoEstoque u)
-    {
-        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
-        if(ProximaPosicaoLivre != -1)
-        {
-            Me[ProximaPosicaoLivre] = u;
+
+    public boolean Adicionar(MovimentacaoEstoque elemento) {
+        String sql = "INSERT INTO Movimentacao_Estoque "
+                + "(fk_produto, quantidade, tipo, valor_unitario, data_criacao, data_modificacao) "
+                + "VALUES (?,?,?,?,?,?)";
+
+        try (Connection con = new ConnectionFactory().getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setLong(1, elemento.getProduto().getId());
+            stmt.setInt(2, elemento.getQuantidade());
+            stmt.setString(3, elemento.getTipo());
+            stmt.setDouble(4, elemento.getValor_unitario());
+            stmt.setTimestamp(5, Timestamp.valueOf(elemento.getData_criacao()));
+            stmt.setTimestamp(6, Timestamp.valueOf(elemento.getData_modificacao()));
+
+            stmt.executeUpdate();
             return true;
-        } else {
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao registrar movimentacao: " + e.getMessage());
             return false;
         }
     }
-    
-    private int proximaPosicaoLivre() {
-        for (int i = 0; i < Me.length; i++) {
-            if (Me[i] == null) {
-                return i;
+
+    public List<MovimentacaoEstoque> getLista() {
+        String sql = "SELECT * FROM Movimentacao_Estoque";
+        List<MovimentacaoEstoque> movs = new ArrayList<>();
+
+        try (Connection con = new ConnectionFactory().getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            ProdutoDAO pdao = new ProdutoDAO();
+
+            while (rs.next()) {
+                MovimentacaoEstoque mov = new MovimentacaoEstoque();
+                mov.setProduto(pdao.buscarPorId(rs.getLong("fk_produto")));
+                mov.setQuantidade(rs.getInt("quantidade"));
+                mov.setTipo(rs.getString("tipo"));
+                mov.setValor_unitario(rs.getDouble("valor_unitario"));
+                
+                // Usando reflection para inserir o id do BD
+                try {
+                    java.lang.reflect.Field idField = MovimentacaoEstoque.class.getDeclaredField("id");
+                    idField.setAccessible(true);
+                    idField.set(mov, rs.getLong("id"));
+                } catch (Exception ex) {}
+
+                movs.add(mov);
             }
 
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return -1;
+        return movs;
+    }
 
-    }
-    
-    public void mostrarTodos() {
-        boolean temUsuario = false;
-        for (MovimentacaoEstoque me : Me) {
-            if (me != null) {
-                System.out.println(me);
-                temUsuario = true;
-            }
-        }
-        if (!temUsuario) {
-            System.out.println("nao existe Movimentação de Estoque");
-        }
-    }
-    
     public boolean remover(long id) {
-        for (int i = 0; i < Me.length; i++) {
-            // Verifica se a posição não está nula e se o ID coincide
-            if (Me[i] != null && Me[i].getId() == id) {
-                Me[i] = null; // Remove a referência do objeto
-                return true;
+        String sql = "DELETE FROM Movimentacao_Estoque WHERE id = ?";
+        try (Connection con = new ConnectionFactory().getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            
+            stmt.setLong(1, id);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void mostrarTodos() {
+        List<MovimentacaoEstoque> movs = getLista();
+        if (movs.isEmpty()) {
+            System.out.println("Nao existe Movimentação de Estoque");
+        } else {
+            for (MovimentacaoEstoque me : movs) {
+                System.out.println(me);
             }
         }
-        return false;
     }
-    
+
     public int consultarSaldo(Produto p) {
-    int saldo = 0;
-    for (int i = 0; i < Me.length; i++) {
-      
-        if (Me[i] != null && Me[i].getProduto().equals(p)) {
-            
-            // Lógica de soma e subtração baseada no tipo
-            if (Me[i].getTipo().equalsIgnoreCase("ENTRADA")) {
-                saldo += Me[i].getQuantidade();
-            } else if (Me[i].getTipo().equalsIgnoreCase("SAIDA")) {
-                saldo -= Me[i].getQuantidade();
+        // O próprio banco de dados fará a matemática para descobrir o saldo
+        String sql = "SELECT "
+                + "COALESCE(SUM(CASE WHEN tipo = 'ENTRADA' THEN quantidade ELSE 0 END), 0) - "
+                + "COALESCE(SUM(CASE WHEN tipo = 'SAIDA' THEN quantidade ELSE 0 END), 0) - "
+                + "COALESCE(SUM(CASE WHEN tipo = 'AJUSTE' THEN quantidade ELSE 0 END), 0) AS saldo "
+                + "FROM Movimentacao_Estoque WHERE fk_produto = ?";
+
+        try (Connection con = new ConnectionFactory().getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setLong(1, p.getId());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("saldo");
             }
-            
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
+        return 0;
     }
-    return saldo;
-}
-    
-   public boolean registrarSaida(Produto p, int qtdVendida) {
-    // 1. Verificar se há saldo disponível antes de diminuir
+
+    public boolean registrarSaida(Produto p, int qtdVendida) {
         int saldoAtual = this.consultarSaldo(p);
 
-        if(qtdVendida <= saldoAtual)
-        {
+        if (qtdVendida <= saldoAtual) {
             MovimentacaoEstoque novaSaida = new MovimentacaoEstoque();
             novaSaida.setProduto(p);
             novaSaida.setQuantidade(qtdVendida);
@@ -135,8 +139,7 @@ public class MovimentacaoEstoqueDAO {
             novaSaida.setValor_unitario(p.getPreco_venda());
 
             return this.Adicionar(novaSaida);
-        }
-        else{
+        } else {
             return false; // Não há estoque suficiente
         }
     }   
