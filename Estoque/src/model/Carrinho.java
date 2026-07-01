@@ -8,7 +8,6 @@ import Util.Util;
 import java.time.LocalDateTime;
 
 public class Carrinho {
-    private static long serial;
     private long id;
     private Usuario usuario;
     private String status;
@@ -16,7 +15,6 @@ public class Carrinho {
     private LocalDateTime data_modificacao;
     
     public Carrinho(Usuario usuario, String status, LocalDateTime data_criacao, LocalDateTime data_modificacao) {
-        this.id = ++Carrinho.serial;
         this.usuario = usuario;
         this.status = status;
         this.data_criacao = data_criacao;
@@ -25,7 +23,6 @@ public class Carrinho {
     
     public Carrinho()
     {
-        this.id = ++Carrinho.serial;
         
         this.data_criacao = LocalDateTime.now();
         this.data_modificacao = LocalDateTime.now();
@@ -49,6 +46,10 @@ public class Carrinho {
 
     public LocalDateTime getData_modificacao() {
         return data_modificacao;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void setUsuario(Usuario usuario) {
