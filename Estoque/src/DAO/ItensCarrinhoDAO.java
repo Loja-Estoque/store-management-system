@@ -4,91 +4,207 @@
  */
 package DAO;
 
+import connection.ConnectionFactory;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
 import model.Carrinho;
 import model.ItensCarrinho;
+import model.Usuario;
+import model.Produto;
 
 /**
  *
  * @author W10
  */
 public class ItensCarrinhoDAO {
-    ItensCarrinho[] itensc = new ItensCarrinho[5];
     
-    public ItensCarrinho buscarPorId(int id) {
-        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
-        for (int i = 0; i < ProximaPosicaoLivre; i++) {
-            if(itensc[i].getId() == id)
-                return itensc[i];
+    List<ItensCarrinho> itensc = getLista();
+   
+    public ItensCarrinho adicionar(ItensCarrinho elemento) {
+        String sql =
+        "INSERT INTO Itens_carrinho "
+        + "(fk_carrinho, fk_produto, quantidade,preço_unitario, data_criacao, data_modificacao)"
+        + " VALUES (?,?,?,?,?,?)";
+
+        try(Connection con = new ConnectionFactory().getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql)){
+
+            stmt.setLong(1, elemento.get_carrinho().getId());
+            stmt.setLong(2, elemento.get_produto().getId());
+            
+            stmt.setInt(3, elemento.getQuantidade());
+            stmt.setDouble(4, elemento.getPreco_unitario());
+           
+           stmt.setTimestamp(5,
+                Timestamp.valueOf(elemento.getData_criacao()));
+
+            stmt.setTimestamp(6,
+                Timestamp.valueOf(elemento.getData_modificacao()));
+
+            stmt.executeUpdate();
+
+        } catch(SQLException e){
+            throw new RuntimeException(e);
         }
-        return null;
+        //na verdade deveria retornar o elemento que foi inserido agora
+        return elemento;
     }
     
-     public ItensCarrinho buscarPorCarrinho(Carrinho carrinho) {
-        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
-        for (int i = 0; i < ProximaPosicaoLivre; i++) {
-            if(itensc[i].get_carrinho() == carrinho)
-                return itensc[i];
+    public List<ItensCarrinho> getLista() {
+
+        String sql = "select * from Itens_carrinho";
+
+        try (Connection con = new ConnectionFactory().getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while(rs.next()){
+
+                ItensCarrinho item = new ItensCarrinho();
+
+                item.setId(rs.getLong("id"));
+
+                CarrinhoDAO dao = new CarrinhoDAO();
+
+                Carrinho carrinho =
+                        dao.buscarPorId(rs.getLong("fk_carrinho"));
+
+                item.setId_carrinho(carrinho);
+                
+                ProdutoDAO Pdao = new ProdutoDAO();
+
+                Produto produto =
+                        Pdao.buscarPorId(rs.getLong("fk_produto"));
+
+                item.setId_produto(produto);
+                
+                item.setQuantidade(rs.getInt("quantidade"));
+
+                item.setPreco_unitario(rs.getDouble("preco_unitario"));
+                
+                item.setData_criacao(rs.getTimestamp("data_criacao").toLocalDateTime());
+
+                item.setData_modificacao(rs.getTimestamp("data_modificacao").toLocalDateTime());
+
+           
+
+                itensc.add(item);
+
+            }
+
+        } catch(SQLException e){
+            throw new RuntimeException(e);
         }
-        return null;
+
+        return itensc;
     }
     
-    public boolean Adicionar(ItensCarrinho c)
-    {
-        int ProximaPosicaoLivre = this.proximaPosicaoLivre();
-        if(ProximaPosicaoLivre != -1)
-        {
-            itensc[ProximaPosicaoLivre] = c;
+    public ItensCarrinho buscarPorId(long id){
+        String sql = "select * from Carrinho where id = ?";
+        
+        try (Connection con = new ConnectionFactory().getConnection();
+         PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setLong(1,id);
+                
+            ResultSet rs = stmt.executeQuery();
+                
+            if(rs.next()){
+                ItensCarrinho item = new ItensCarrinho();
+
+                item.setId(rs.getLong("id"));
+
+                CarrinhoDAO dao = new CarrinhoDAO();
+
+                Carrinho carrinho =
+                        dao.buscarPorId(rs.getLong("fk_carrinho"));
+
+                item.setId_carrinho(carrinho);
+                
+                ProdutoDAO Pdao = new ProdutoDAO();
+
+                Produto produto =
+                        Pdao.buscarPorId(rs.getLong("fk_produto"));
+
+                item.setId_produto(produto);
+                
+                item.setQuantidade(rs.getInt("quantidade"));
+
+                item.setPreco_unitario(rs.getDouble("preco_unitario"));
+                
+                item.setData_criacao(rs.getTimestamp("data_criacao").toLocalDateTime());
+
+                item.setData_modificacao(rs.getTimestamp("data_modificacao").toLocalDateTime());
+
+                return item;
+            }
+        } catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        
+        return null;
+    }
+
+    public boolean alterar(ItensCarrinho itens) {
+        
+        String sql = "Uptade Itens_carrinho" 
+                + "set fk_carrinho = ?"
+                + "set fk_produto = ?"
+                + "quantidade = ?"
+                + "preco_unitario = ?"
+                + "data_moficacao = ?"
+                + "where id = ?";
+        try(Connection con = new ConnectionFactory().getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql)){
+            
+            stmt.setLong(1, itens.get_carrinho().getId());
+            stmt.setLong(2, itens.get_produto().getId());
+            
+            stmt.setInt(3, itens.getQuantidade());
+            stmt.setDouble(4, itens.getPreco_unitario());
+
+            stmt.setTimestamp(5,
+                Timestamp.valueOf(itens.getData_modificacao()));
+
+            stmt.setLong(6,
+                itens.getId());
             return true;
-        } else {
+            
+        }catch(SQLException e){
             return false;
         }
-    }
-    
-    private int proximaPosicaoLivre() {
-        for (int i = 0; i < itensc.length; i++) {
-            if (itensc[i] == null) {
-                return i;
-            }
-
-        }
-        return -1;
 
     }
     
-    /*public boolean remover(String nome) {
-        for (int i = 0; i < carrinho.length; i++) {
-            if (carrinho[i] != null && carrinho[i].getPedido().equals(nome)) {
-                carrinho[i] = null;
-                return true;
-            }
+    public ItensCarrinho Excluir(ItensCarrinho itens){
+        String sql = "delete from Itens_carrinho where id = ?";
+        
+        try(Connection con = new ConnectionFactory().getConnection();
+                PreparedStatement stmt = con.prepareStatement(sql)){
+            
+            stmt.setLong(1, itens.getId());
+            
+            stmt.execute();
+            
+            System.out.println("Carrinho excluído");
+            
+        }catch(SQLException e){
+            throw new RuntimeException(e);
         }
-        return false;
-
-    }*/
-    
-    public boolean alterar(ItensCarrinho itenscAtualizado) {
-        for (int i = 0; i < itensc.length; i++) {
-            // Verifica se a posição não é nula e se o ID é igual ao do produto atualizado
-            if (itensc[i] != null && itensc[i].getId() == itenscAtualizado.getId()) {
-                itensc[i] = itenscAtualizado; // Substitui o antigo pelo novo
-                return true;
-            }
-        }
-        return false; // Retorna falso se não encontrou o produto para alterar
+        
+        return itens;
     }
     
-    public void mostrarTodos() {
-        boolean temProdutos = false;
-        for (ItensCarrinho Ic : itensc) {
-            if (Ic != null) {
-                System.out.println(Ic);
-                temProdutos = true;
-            }
-        }
-        if (!temProdutos) {
-            System.out.println("nao existe Produto cadastrado");
+    public void Mostrar(){
+        itensc = getLista();
+        for(ItensCarrinho item : itensc){
+            System.out.println(item.toString());
         }
     }
+    
     
     // No ItensCarrinhoDAO.java
         public void mostrarItensDoCarrinho(long idCarrinho) {

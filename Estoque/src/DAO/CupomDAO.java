@@ -22,6 +22,10 @@ import model.Cupom;
  * @author W10
  */
 public class CupomDAO {
+    
+    List<Cupom> cupons = getLista();
+    
+    
 
     public CupomDAO()
     {
@@ -80,8 +84,6 @@ public class CupomDAO {
     public List<Cupom> getLista() {
 
         String sql = "select * from Cupom";
-
-        List<Cupom> cupons = new ArrayList<>();
 
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql);
@@ -239,7 +241,7 @@ public class CupomDAO {
     }
     
     public void Mostrar(){
-        List<Cupom> cupons = getLista();
+        cupons = getLista();
         for(Cupom cupom : cupons){
             System.out.println(cupom.toString());
         }

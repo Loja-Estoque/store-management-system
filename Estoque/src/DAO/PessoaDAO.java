@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PessoaDAO {
+    
+     List<Pessoa> pessoas = getLista();
      public Pessoa adicionar(Pessoa elemento) {
         String sql = "insert into Pessoa "
                 + "(nome,nascimento,documento,data_criacao,data_modificacao )" + " values (?,?,?,?,?)";
@@ -44,7 +46,7 @@ public class PessoaDAO {
 
         String sql = "select * from Pessoa";
 
-        List<Pessoa> pessoas = new ArrayList<>();
+       
 
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql);
@@ -192,7 +194,7 @@ public class PessoaDAO {
     }
     
     public void Mostrar(){
-        List<Pessoa> pessoas = getLista();
+        pessoas = getLista();
         for(Pessoa pessoa : pessoas){
             System.out.println(pessoa.toString());
         }

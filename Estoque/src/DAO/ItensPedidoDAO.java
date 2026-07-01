@@ -23,6 +23,7 @@ import model.Produto;
  * @author Thalita
  */
 public class ItensPedidoDAO {
+    List<ItensPedido> itensPedidos = getLista();
     public ItensPedido adicionar(ItensPedido elemento) {
         String sql =
         "INSERT INTO Itens_pedido "
@@ -64,8 +65,6 @@ public class ItensPedidoDAO {
     public List<ItensPedido> getLista() {
 
         String sql = "select * from Itens_pedido";
-
-        List<ItensPedido> itensPedidos = new ArrayList<>();
 
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql);
@@ -205,7 +204,7 @@ public class ItensPedidoDAO {
     }
     
     public void Mostrar(){
-        List<ItensPedido> itensPedidos = getLista();
+        itensPedidos = getLista();
         for(ItensPedido itens : itensPedidos){
             System.out.println(itens.toString());
         }
