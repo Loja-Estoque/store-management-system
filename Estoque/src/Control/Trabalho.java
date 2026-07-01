@@ -95,7 +95,7 @@ public class Trabalho {
                                         if (acao != 0) {
                                             try {
                                                 this.executarAcao(assunto, acao);
-                                            } catch (DocumentException | IOException e) {
+                                            } catch (Exception e) {
                                                 System.out.println("Erro ao executar a ação.");
                                                 e.printStackTrace();
                                             }
@@ -723,7 +723,7 @@ public class Trabalho {
                         System.out.println(carrinhoAtual);
 
                         // Mostra os itens já adicionados ao carrinho
-                        itensCarrinhoDAO.mostrarTodos();
+                        itensCarrinhoDAO.mostrar();
 
                         System.out.println("\nDeseja gerenciar seu carrinho?");
                         System.out.println("1 - Sim / 0 - Voltar");
@@ -753,11 +753,13 @@ public class Trabalho {
                     break;
                 
                 case 7:
-
-                    relatorio.gerarRelatorioPedidosUsuario(pedidoDAO,u);
-
-                    System.out.println("Seu relatório foi gerado!");
-
+                    try {
+                        relatorio.gerarRelatorioPedidosUsuario(pedidoDAO, u);
+                        System.out.println("Seu relatório foi gerado!");
+                    } catch (Exception e) {
+                        System.out.println("Erro ao gerar o relatório. Verifique se o arquivo não está aberto em outro programa.");
+                        e.printStackTrace();
+                    }
                     break;
 
                 case 0:
@@ -798,7 +800,7 @@ public class Trabalho {
                 case 2:
                     prepararCarrinho(u);
                     ItensCarrinho Ic = CriarItemCarrinho(carrinhoAtual, temp, qnt);
-                    if (itensCarrinhoDAO.Adicionar(Ic)) {
+                    if (itensCarrinhoDAO.adicionar(Ic)) {
                         System.out.println(temp.getNome() + "Foi adicionado com sucesso ao carrinho");
                     } else {
                         System.out.println("Não foi possível Adicionar ao carrinho");
@@ -917,7 +919,7 @@ public class Trabalho {
 
             prepararCarrinho(u);
             ItensCarrinho TempIc = CriarItemCarrinho(carrinhoAtual, temp, qnt);
-            if (itensCarrinhoDAO.Adicionar(TempIc)) {
+            if (itensCarrinhoDAO.adicionar(TempIc)) {
                 System.out.println("Item Adicionado ao histórico com sucesso");
                 carrinhoAtual.setStatus("FECHADO"); 
             }
@@ -943,7 +945,7 @@ public class Trabalho {
         // 4. Fechar Carrinho
         //prepararCarrinho(u);
             ItensCarrinho TempIc = CriarItemCarrinho(carrinhoAtual, p, qnt);
-            if (itensCarrinhoDAO.Adicionar(TempIc)) {
+            if (itensCarrinhoDAO.adicionar(TempIc)) {
                 System.out.println("Item Adicionado ao histórico com sucesso");
                 carrinhoAtual.setStatus("FECHADO");
                 this.carrinhoAtual = null; 
@@ -981,7 +983,7 @@ public class Trabalho {
                 case 2:
 
                     System.out.println("Processando finalização...");
-                    ItensCarrinho tempIC = itensCarrinhoDAO.buscarPorCarrinho(carrinhoAtual);
+                    ItensCarrinho tempIC = itensCarrinhoDAO.buscarPorId(carrinhoAtual.getId());
                     finalizarCarrinho(tempIC.get_produto(), tempIC.getQuantidade());
                     op = 0; // Sai após finalizar
                     break;

@@ -21,12 +21,10 @@ import model.Produto;
  */
 public class ProdutoDAO {
     
-    List<Produto> produtos = getLista();
-    
     public Produto adicionar(Produto elemento) {
         String sql =
         "INSERT INTO Produto "
-        + "(nome, descricao, preco_venda, ativo, data_criacao, data_modificacao)"
+        + "(nome, descricao, preco_venda, ativo, data_criacao, data_modificacao)"   
         + " VALUES (?,?,?,?,?,?)";
 
         try(Connection con = new ConnectionFactory().getConnection();
@@ -62,6 +60,7 @@ public class ProdutoDAO {
 
         String sql = "select * from Produto";
 
+        List<Produto> produtos = new ArrayList<>();
 
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql);
@@ -218,14 +217,14 @@ public class ProdutoDAO {
     }
     
     public void Mostrar(){
-       produtos = getLista();
+        List<Produto> produtos = getLista();
         for(Produto produto : produtos){
             System.out.println(produto.toString());
         }
     }
     
     public void MostrarCompra(){
-        produtos = getLista();
+        List<Produto> produtos = getLista();
         for(Produto produto : produtos){
             System.out.println(produto.getId() +" - "+ produto.getNome());
         }

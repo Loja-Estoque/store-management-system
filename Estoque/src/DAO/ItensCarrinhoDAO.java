@@ -24,7 +24,7 @@ public class ItensCarrinhoDAO {
     
     List<ItensCarrinho> itensc = getLista();
    
-    public ItensCarrinho adicionar(ItensCarrinho elemento) {
+    public boolean adicionar(ItensCarrinho elemento) {
         String sql =
         "INSERT INTO Itens_carrinho "
         + "(fk_carrinho, fk_produto, quantidade,preço_unitario, data_criacao, data_modificacao)"
@@ -35,23 +35,17 @@ public class ItensCarrinhoDAO {
 
             stmt.setLong(1, elemento.get_carrinho().getId());
             stmt.setLong(2, elemento.get_produto().getId());
-            
             stmt.setInt(3, elemento.getQuantidade());
             stmt.setDouble(4, elemento.getPreco_unitario());
-           
-           stmt.setTimestamp(5,
-                Timestamp.valueOf(elemento.getData_criacao()));
-
-            stmt.setTimestamp(6,
-                Timestamp.valueOf(elemento.getData_modificacao()));
+            stmt.setTimestamp(5, Timestamp.valueOf(elemento.getData_criacao()));
+            stmt.setTimestamp(6, Timestamp.valueOf(elemento.getData_modificacao()));
 
             stmt.executeUpdate();
-
+            return true;
         } catch(SQLException e){
-            throw new RuntimeException(e);
+            System.out.println("Erro ao adicionar item: " + e.getMessage());
+            return false;
         }
-        //na verdade deveria retornar o elemento que foi inserido agora
-        return elemento;
     }
     
     public List<ItensCarrinho> getLista() {
@@ -198,7 +192,7 @@ public class ItensCarrinhoDAO {
         return itens;
     }
     
-    public void Mostrar(){
+    public void mostrar(){
         itensc = getLista();
         for(ItensCarrinho item : itensc){
             System.out.println(item.toString());
