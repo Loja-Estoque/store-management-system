@@ -21,7 +21,7 @@ import java.util.List;
 
 public class PedidoDAO {
 
-
+            List<Pedido> pedidos = getLista();
     public Pedido adicionar(Pedido elemento) {
         String sql =
             "INSERT INTO Pedido "
@@ -71,8 +71,6 @@ public class PedidoDAO {
     public List<Pedido> getLista() {
 
         String sql = "select * from Pedido";
-
-        List<Pedido> pedidos = new ArrayList<>();
 
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql);
@@ -228,7 +226,7 @@ public class PedidoDAO {
     }
     
     public void Mostrar(){
-        List<Pedido> pedidos = getLista();
+        pedidos = getLista();
         for(Pedido pedido : pedidos){
             System.out.println(pedido.toString());
         }
@@ -238,7 +236,7 @@ public class PedidoDAO {
 
         String sql = "SELECT * FROM Pedido WHERE fk_usuario = ?";
 
-        List<Pedido> pedidos = new ArrayList<>();
+        pedidos = new ArrayList<>();
 
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -292,7 +290,7 @@ public class PedidoDAO {
     
     public void mostrarTodosPorUsuario(Usuario usuario) {
 
-        List<Pedido> pedidos = buscarPorUsuario(usuario);
+        pedidos = buscarPorUsuario(usuario);
 
         if (pedidos.isEmpty()) {
             System.out.println("\nVocê ainda não possui pedidos registrados.\n");

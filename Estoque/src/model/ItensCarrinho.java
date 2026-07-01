@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import Util.Util;
 
 public class ItensCarrinho {
-    private static long serial;
     private long id;
     private Carrinho carrinho;
     private Produto produto;
@@ -18,7 +17,6 @@ public class ItensCarrinho {
     private LocalDateTime data_modificacao;
     
     public ItensCarrinho( long id_carrinho, long id_produto, int quantidade, double preco_unitario, LocalDateTime data_criacao, LocalDateTime data_modificacao) {
-        this.id = ++ItensCarrinho.serial;
         this.quantidade = quantidade;
         this.preco_unitario = preco_unitario;
         this.data_criacao = data_criacao;
@@ -27,7 +25,6 @@ public class ItensCarrinho {
     
     public ItensCarrinho()
     {
-        this.id = ++ItensCarrinho.serial;
         
         this.data_criacao = Util.getAgora();
         this.data_modificacao = Util.getAgora();
@@ -61,6 +58,12 @@ public class ItensCarrinho {
         return data_modificacao;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+    
+    
+
     public void setId_carrinho(Carrinho carrinho) {
         this.carrinho = carrinho;
         this.data_modificacao = Util.getAgora();
@@ -80,6 +83,16 @@ public class ItensCarrinho {
         this.preco_unitario = preco_unitario;
         this.data_modificacao = Util.getAgora();
     }
+
+    public void setData_criacao(LocalDateTime data_criacao) {
+        this.data_criacao = data_criacao;
+    }
+
+    public void setData_modificacao(LocalDateTime data_modificacao) {
+        this.data_modificacao = data_modificacao;
+    }
+    
+    
 
 
     @Override

@@ -21,7 +21,10 @@ import model.Pessoa;
  * @author W10
  */
 public class UsuarioDAO {
-    private Usuario[] usuarios = new Usuario[5];
+    
+    
+     List<Usuario> usuarios = getLista();
+    
     
     PessoaDAO pessoaDAO = new PessoaDAO();
     
@@ -77,7 +80,6 @@ public class UsuarioDAO {
 
         String sql = "select * from Usuario";
 
-        List<Usuario> usuarios = new ArrayList<>();
 
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql);
@@ -243,7 +245,7 @@ public class UsuarioDAO {
     }
     
     public void Mostrar(){
-        List<Usuario> usuarios = getLista();
+        usuarios = getLista();
         for(Usuario usuario : usuarios){
             System.out.println(usuario.toString());
         }

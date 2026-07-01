@@ -23,9 +23,11 @@ import model.Usuario;
  */
 public class CarrinhoDAO {
     
+    List<Carrinho> carrinhos = getLista();
+    
       public Carrinho adicionar(Carrinho elemento) {
         String sql =
-        "INSERT INTO Usuario "
+        "INSERT INTO Carrinho "
         + "(fk_usuario, status, data_criacao, data_modificacao)"
         + " VALUES (?,?,?,?)";
 
@@ -53,8 +55,6 @@ public class CarrinhoDAO {
     public List<Carrinho> getLista() {
 
         String sql = "select * from Carrinho";
-
-        List<Carrinho> carrinhos = new ArrayList<>();
 
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql);
@@ -178,7 +178,7 @@ public class CarrinhoDAO {
     }
     
     public void Mostrar(){
-        List<Carrinho> carrinhos = getLista();
+        carrinhos = getLista();
         for(Carrinho carrinho : carrinhos){
             System.out.println(carrinho.toString());
         }
@@ -186,7 +186,7 @@ public class CarrinhoDAO {
     
     
     public void verificarCarrinhosExpirados(LocalDateTime agoraSimulado) {
-        List<Carrinho> carrinhos = getLista();
+        carrinhos = getLista();
         for (Carrinho carrinho : carrinhos) {
             if (carrinho != null && carrinho.getStatus().equals("ABERTO")) {
                 // Calcula a diferença entre a criação e o tempo atual
