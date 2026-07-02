@@ -302,13 +302,15 @@ public class Trabalho {
                     p.setData_criacao(Util.getAgora());
 
                     System.out.println("Para ativar o produto precisa adiciona-lo ao estoque");
-
-                    MovimentacaoEstoque tempME = CriarMovimentacaoEntrada(p);
-                    if (MovimentacaoDAO.Adicionar(tempME)) {
                         p.setAtivo(true);
                         produtoDAO.adicionar(p);
+                    Produto tempP = produtoDAO.buscarPorNome(p.getNome());
+                    MovimentacaoEstoque tempME = CriarMovimentacaoEntrada(tempP);
+                    if (MovimentacaoDAO.Adicionar(tempME)) {
+                        
                         System.out.println("Adicionado");
                     } else {
+                        produtoDAO.Excluir(p);
                         System.out.println("Não foi possível adicionar esse produto");
                     }
 
@@ -330,7 +332,12 @@ public class Trabalho {
 
                         System.out.println("O produto está ativo? (1 - Sim / 2 - Não): ");
                         int opAtivo = Integer.parseInt(scanner.nextLine());
-                        pExistente.setAtivo(opAtivo == 1);
+                        if(opAtivo == 1){
+                            pExistente.setAtivo(true);
+                        } else{
+                            pExistente.setAtivo(false);
+                        }
+                        
 
                         if (produtoDAO.alterar(pExistente)) {
                             System.out.println("Produto alterado com sucesso!");
@@ -752,7 +759,7 @@ public class Trabalho {
                     System.out.println(u);
                     break;
                 
-                case 7:
+                case 6:
                     try {
                         relatorio.gerarRelatorioPedidosUsuario(pedidoDAO, u);
                         System.out.println("Seu relatório foi gerado!");
@@ -896,7 +903,8 @@ public class Trabalho {
                     if (cupom.getTipo_desconto().equals("FIXO")) {
                         total -= cupom.getValor_desconto();
                     } else {
-                        total -= (total * (cupom.getValor_desconto() / 100));
+                        double cont = cupom.getValor_desconto() / 100;
+                        total -= (total * cont);
                     }
                     novoPedido.setCupom(cupom);
                     

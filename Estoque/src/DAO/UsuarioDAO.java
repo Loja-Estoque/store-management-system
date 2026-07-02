@@ -23,9 +23,6 @@ import model.Pessoa;
 public class UsuarioDAO {
     
     
-     List<Usuario> usuarios = getLista();
-    
-    
     PessoaDAO pessoaDAO = new PessoaDAO();
     
     public UsuarioDAO(){
@@ -80,7 +77,7 @@ public class UsuarioDAO {
 
         String sql = "select * from Usuario";
 
-
+             List<Usuario> usuarios = new ArrayList<>();
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -194,11 +191,11 @@ public class UsuarioDAO {
     
     public boolean alterar(Usuario usuario) {
         
-        String sql = "Uptade Usuario" 
-                + "set fk_pessoa = ?"
-                + "login = ?"
-                + "senha = ?"
-                + "data_moficacao = ?"
+        String sql = "Uptade Usuario set " 
+                + "fk_pessoa = ?, "
+                + "login = ?, "
+                + "senha = ?, "
+                + "data_moficacao = ? "
                 + "where id = ?";
         try(Connection con = new ConnectionFactory().getConnection();
             PreparedStatement stmt = con.prepareStatement(sql)){
@@ -217,6 +214,8 @@ public class UsuarioDAO {
 
             stmt.setLong(5,
                 usuario.getId());
+            
+            stmt.executeUpdate();
             return true;
             
         }catch(SQLException e){
@@ -245,7 +244,7 @@ public class UsuarioDAO {
     }
     
     public void Mostrar(){
-        usuarios = getLista();
+        List<Usuario> usuarios = getLista();
         for(Usuario usuario : usuarios){
             System.out.println(usuario.toString());
         }

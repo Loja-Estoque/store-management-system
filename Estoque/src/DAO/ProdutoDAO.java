@@ -10,6 +10,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,8 @@ public class ProdutoDAO {
         + " VALUES (?,?,?,?,?,?)";
 
         try(Connection con = new ConnectionFactory().getConnection();
-            PreparedStatement stmt = con.prepareStatement(sql)){
+            PreparedStatement stmt =
+                con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);){
             
             stmt.setString(1, elemento.getNome());
 
@@ -46,7 +48,13 @@ public class ProdutoDAO {
                 Timestamp.valueOf(elemento.getData_modificacao()));
 
             stmt.executeUpdate();
-            
+
+            ResultSet rs = stmt.getGeneratedKeys();
+
+            if(rs.next()){
+                elemento.setId(rs.getLong(1));
+            }
+
             return elemento;
 
         } catch(SQLException e){
@@ -129,6 +137,8 @@ public class ProdutoDAO {
         return null;
     }
     
+    
+    
     public Produto buscarPorNome(String nome){
         String sql = "select * from Produto where nome = ?";
         
@@ -167,12 +177,12 @@ public class ProdutoDAO {
     
     public boolean alterar(Produto produto) {
         
-        String sql = "Uptade Produto" 
-                + "set nome = ?"
-                + "descricao = ?"
-                + "preco_venda = ?"
-                + "ativo = ?"
-                + "data_moficacao = ?"
+        String sql = "Uptade Produto set " 
+                + "nome = ?, "
+                + "descricao = ?, "
+                + "preco_venda = ?, "
+                + "ativo = ?, "
+                + "data_modificacao = ? "
                 + "where id = ?";
         try(Connection con = new ConnectionFactory().getConnection();
             PreparedStatement stmt = con.prepareStatement(sql)){
@@ -187,8 +197,10 @@ public class ProdutoDAO {
             
             stmt.setTimestamp(5, Timestamp.valueOf(produto.getData_modificacao()));
 
-            stmt.setLong(7,
+            stmt.setLong(6,
                 produto.getId());
+            
+            stmt.executeUpdate();
             return true;
             
         }catch(SQLException e){

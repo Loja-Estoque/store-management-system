@@ -7,12 +7,16 @@ package Util;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import DAO.PedidoDAO;
+
 /**
  *
  * @author W10
  */
 public class Util {
     private static LocalDateTime dataAtual = LocalDateTime.now();
+    
+    PedidoDAO pedidoDao = new PedidoDAO();
 
 
     public static LocalDateTime getAgora() {

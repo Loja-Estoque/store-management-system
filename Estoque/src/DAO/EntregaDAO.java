@@ -197,26 +197,33 @@ public class EntregaDAO {
     }
 
     public void AtualizarStatus() {
+
         LocalDateTime hoje = Util.getAgora();
+
         List<Entrega> entregas = getLista();
 
         for (Entrega e : entregas) {
-            long horasPassadas = java.time.Duration.between(e.getData_modificacao(), hoje).toHours();
+
+            long horasPassadas =
+                    java.time.Duration.between(
+                            e.getData_modificacao(),
+                            hoje).toHours();
 
             if (horasPassadas >= 24) {
-                boolean mudou = false;
+
                 switch (e.getStatus()) {
+
                     case "PREPARANDO":
                         e.setStatus("ENVIADO");
-                        mudou = true;
+                        e.setData_modificacao(hoje);
+                        alterar(e);
                         break;
+
                     case "ENVIADO":
                         e.setStatus("ENTREGUE");
-                        mudou = true;
+                        e.setData_modificacao(hoje);
+                        alterar(e);
                         break;
-                }
-                if (mudou) {
-                    this.alterar(e); // Salva no banco a alteração de status
                 }
             }
         }

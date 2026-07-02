@@ -14,56 +14,56 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import java.sql.Statement;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PedidoDAO {
 
-            List<Pedido> pedidos = getLista();
+
     public Pedido adicionar(Pedido elemento) {
+
         String sql =
             "INSERT INTO Pedido "
-          + "(fk_usuario,fk_cupom, status, valor_total, forma_pagamento,"
-          + " data_criacao, data_modificacao)"
-          + " VALUES (?,?,?,?,?,?,?)";
+          + "(fk_usuario, fk_cupom, status, valor_total, forma_pagamento, "
+          + "data_criacao, data_modificacao) "
+          + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try(Connection con = new ConnectionFactory().getConnection();
-            PreparedStatement stmt =
-                    con.prepareStatement(sql)){
+        try (Connection con = new ConnectionFactory().getConnection();
+             PreparedStatement stmt = con.prepareStatement(
+                     sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setLong(1,
-                elemento.getUsuario().getId());
-            
+            stmt.setLong(1, elemento.getUsuario().getId());
+
             if (elemento.getCupom() != null) {
                 stmt.setLong(2, elemento.getCupom().getId());
             } else {
                 stmt.setNull(2, java.sql.Types.BIGINT);
             }
 
-            stmt.setString(3,
-                elemento.getStatus());
-
-            stmt.setDouble(4,
-                elemento.getValor_total());
-
-            stmt.setString(5,
-                elemento.getForma_pagamento());
-
-            stmt.setTimestamp(6,
-                Timestamp.valueOf(
-                    elemento.getData_criacao()));
-
-            stmt.setTimestamp(7,
-                Timestamp.valueOf(
-                    elemento.getData_modificacao()));
+            stmt.setString(3, elemento.getStatus());
+            stmt.setDouble(4, elemento.getValor_total());
+            stmt.setString(5, elemento.getForma_pagamento());
+            stmt.setTimestamp(6, Timestamp.valueOf(elemento.getData_criacao()));
+            stmt.setTimestamp(7, Timestamp.valueOf(elemento.getData_modificacao()));
 
             stmt.executeUpdate();
 
+            // Recupera o ID gerado pelo banco
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    elemento.setId(rs.getLong(1));
+                }
+            }
+
             return elemento;
 
-        }catch(SQLException e){
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -71,6 +71,8 @@ public class PedidoDAO {
     public List<Pedido> getLista() {
 
         String sql = "select * from Pedido";
+        
+        List<Pedido> pedidos = new ArrayList<>();
 
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql);
@@ -165,13 +167,13 @@ public class PedidoDAO {
     
     public boolean alterar(Pedido pedido) {
         
-        String sql = "Uptade Pedido" 
-                + "set fk_usuario = ?"
-                + "fk_cupom = ?"
-                + "status = ?"
-                + "valor_total = ?"
-                + "forma_pagamento = ?"
-                + "data_moficacao = ?"
+        String sql = "UPDATE Pedido SET " 
+                + "fk_usuario = ?, "
+                + "fk_cupom = ?, "
+                + "status = ?, "
+                + "valor_total = ?, "
+                + "forma_pagamento = ?, "
+                + "data_modificacao = ? "
                 + "where id = ?";
         try(Connection con = new ConnectionFactory().getConnection();
             PreparedStatement stmt = con.prepareStatement(sql)){
@@ -198,9 +200,12 @@ public class PedidoDAO {
 
             stmt.setLong(7,
                 pedido.getId());
+            
+            stmt.executeUpdate();
             return true;
             
         }catch(SQLException e){
+            e.printStackTrace();
             return false;
         }
 
@@ -216,7 +221,7 @@ public class PedidoDAO {
             
             stmt.execute();
             
-            System.out.println("Usuario excluído");
+            System.out.println("Pedido excluído");
             
         }catch(SQLException e){
             throw new RuntimeException(e);
@@ -226,7 +231,7 @@ public class PedidoDAO {
     }
     
     public void Mostrar(){
-        pedidos = getLista();
+        List<Pedido> pedidos = getLista();
         for(Pedido pedido : pedidos){
             System.out.println(pedido.toString());
         }
@@ -236,7 +241,7 @@ public class PedidoDAO {
 
         String sql = "SELECT * FROM Pedido WHERE fk_usuario = ?";
 
-        pedidos = new ArrayList<>();
+        List<Pedido> pedidos = new ArrayList<>();
 
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -289,6 +294,7 @@ public class PedidoDAO {
     }
     
     public void mostrarTodosPorUsuario(Usuario usuario) {
+        List<Pedido> pedidos = getLista();
 
         pedidos = buscarPorUsuario(usuario);
 
@@ -408,28 +414,34 @@ public class PedidoDAO {
         return 0;
     }
     
-    public void AtualizarStatus()
-    {
+   public void AtualizarStatus() {
+
         LocalDateTime hoje = Util.getAgora();
-    
+
         List<Pedido> pedidos = getLista();
-        for(Pedido e : pedidos) {
-            if (e != null) {
-                // Calcula a diferença em horas entre a última mudança e o "agora" simulado
-                long horasPassadas = java.time.Duration.between(e.getData_modificacao(), hoje).toHours();
 
-                if (horasPassadas >= 24) {
-                    switch (e.getStatus()) {
-                        case "PAGO":
-                            e.setStatus("ENVIADO");
-                            //p.setDataModificacao(hoje);
-                            break;
-                        case "ENVIADO":
-                            e.setStatus("ENTREGUE");
-                            //p.setDataModificacao(hoje);
-                            break;
+        for (Pedido e : pedidos) {
 
-                    }
+            long horasPassadas =
+                    Duration.between(
+                            e.getData_modificacao(),
+                            hoje).toHours();
+
+            if (horasPassadas >= 24) {
+
+                switch (e.getStatus()) {
+
+                    case "PAGO":
+                        e.setStatus("ENVIADO");
+                        e.setData_modificacao(hoje);
+                        alterar(e);      // salva no banco
+                        break;
+
+                    case "ENVIADO":
+                        e.setStatus("ENTREGUE");
+                        e.setData_modificacao(hoje);
+                        alterar(e);      // salva no banco
+                        break;
                 }
             }
         }

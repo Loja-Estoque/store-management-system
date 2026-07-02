@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import model.Carrinho;
@@ -23,7 +24,7 @@ import model.Usuario;
  */
 public class CarrinhoDAO {
     
-    List<Carrinho> carrinhos = getLista();
+
     
       public Carrinho adicionar(Carrinho elemento) {
         String sql =
@@ -32,7 +33,8 @@ public class CarrinhoDAO {
         + " VALUES (?,?,?,?)";
 
         try(Connection con = new ConnectionFactory().getConnection();
-            PreparedStatement stmt = con.prepareStatement(sql)){
+             PreparedStatement stmt = con.prepareStatement(
+                     sql, Statement.RETURN_GENERATED_KEYS)){
 
             stmt.setLong(1, elemento.getUsuario().getId());
             stmt.setString(2, elemento.getStatus());
@@ -42,19 +44,30 @@ public class CarrinhoDAO {
 
             stmt.setTimestamp(4,
                 Timestamp.valueOf(elemento.getData_modificacao()));
+            
+            
 
             stmt.executeUpdate();
+            
+           try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    elemento.setId(rs.getLong(1));
+                }
+            }
+
+            return elemento;
 
         } catch(SQLException e){
             throw new RuntimeException(e);
         }
         //na verdade deveria retornar o elemento que foi inserido agora
-        return elemento;
     }
     
     public List<Carrinho> getLista() {
 
         String sql = "select * from Carrinho";
+        
+            List<Carrinho> carrinhos = new ArrayList<>();
 
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql);
@@ -131,10 +144,10 @@ public class CarrinhoDAO {
 
     public boolean alterar(Carrinho carrinho) {
         
-        String sql = "Uptade Carrinho" 
-                + "set fk_usuario = ?"
-                + "status = ?"
-                + "data_moficacao = ?"
+        String sql = "UPDATE Carrinho SET " 
+                + "fk_usuario = ?, "
+                + "status = ?, "
+                + "data_modificacao = ? "
                 + "where id = ?";
         try(Connection con = new ConnectionFactory().getConnection();
             PreparedStatement stmt = con.prepareStatement(sql)){
@@ -150,6 +163,8 @@ public class CarrinhoDAO {
 
             stmt.setLong(4,
                 carrinho.getId());
+            
+            stmt.executeUpdate();
             return true;
             
         }catch(SQLException e){
@@ -178,7 +193,7 @@ public class CarrinhoDAO {
     }
     
     public void Mostrar(){
-        carrinhos = getLista();
+        List<Carrinho> carrinhos = getLista();
         for(Carrinho carrinho : carrinhos){
             System.out.println(carrinho.toString());
         }
@@ -186,7 +201,7 @@ public class CarrinhoDAO {
     
     
     public void verificarCarrinhosExpirados(LocalDateTime agoraSimulado) {
-        carrinhos = getLista();
+        List<Carrinho> carrinhos = getLista();
         for (Carrinho carrinho : carrinhos) {
             if (carrinho != null && carrinho.getStatus().equals("ABERTO")) {
                 // Calcula a diferença entre a criação e o tempo atual

@@ -103,6 +103,44 @@ public class MovimentacaoEstoqueDAO {
             }
         }
     }
+    
+    public boolean alterar(MovimentacaoEstoque mov) {
+        
+        String sql = "Uptade Pedido SET " 
+                + "fk_produto = ?, "
+                + "quantidade = ?, "
+                + "tipo = ?, "
+                + "valor_unitario = ?, "
+                + "data_modificacao = ? "
+                + "where id = ?";
+        try(Connection con = new ConnectionFactory().getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql)){
+            
+            stmt.setLong(1,
+                mov.getProduto().getId());
+
+            stmt.setInt(2,
+                mov.getQuantidade());
+            
+            stmt.setString(3,
+                "AJUSTE");
+            
+            stmt.setDouble(4,
+                mov.getValor_unitario());
+            
+            stmt.setTimestamp(5, Timestamp.valueOf(mov.getData_modificacao()));
+
+            stmt.setLong(6,
+                mov.getId());
+            
+            stmt.executeUpdate();
+            return true;
+            
+        }catch(SQLException e){
+            return false;
+        }
+
+    }
 
     public int consultarSaldo(Produto p) {
         // O próprio banco de dados fará a matemática para descobrir o saldo
@@ -143,4 +181,23 @@ public class MovimentacaoEstoqueDAO {
             return false; // Não há estoque suficiente
         }
     }   
+    
+    public MovimentacaoEstoque Excluir(MovimentacaoEstoque mov){
+        String sql = "delete from Movimentacao_Estoque where id = ?";
+        
+        try(Connection con = new ConnectionFactory().getConnection();
+                PreparedStatement stmt = con.prepareStatement(sql)){
+            
+            stmt.setLong(1, mov.getId());
+            
+            stmt.execute();
+            
+            System.out.println("Estoque excluída");
+            
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        
+        return mov;
+    }
 }

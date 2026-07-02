@@ -9,6 +9,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.File;
 
 import DAO.PedidoDAO;
 import java.time.LocalDate;
@@ -23,10 +24,13 @@ import model.Usuario;
  */
 public class RelatorioPDF {
     
+
      public void gerarRelatorioPedidos(PedidoDAO pedidoDAO)
             throws DocumentException, IOException {
 
         Document document = new Document();
+        System.out.println("Diretório atual:");
+        System.out.println(System.getProperty("user.dir"));
 
         PdfWriter.getInstance(document,
                 new FileOutputStream("reports/RelatorioPedidos.pdf"));
@@ -144,7 +148,7 @@ public class RelatorioPDF {
 
         PdfWriter.getInstance(document,
                 new FileOutputStream(
-                "reports/MeusPedidos.pdf"));
+                "reports/MeusPedidosCliente.pdf"));
 
         document.open();
 

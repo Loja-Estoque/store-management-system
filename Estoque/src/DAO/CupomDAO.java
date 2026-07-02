@@ -23,7 +23,6 @@ import model.Cupom;
  */
 public class CupomDAO {
     
-    List<Cupom> cupons = getLista();
     
     
 
@@ -51,7 +50,7 @@ public class CupomDAO {
         String sql =
         "INSERT INTO Cupom "
         + "(codigo, tipo_desconto, valor_minimo_pedido, data_validade, ativo, data_criacao, data_modificacao)"
-        + " VALUES (?,?,?,?,?,?,?,?)";
+        + " VALUES (?,?,?,?,?,?,?)";
 
         try(Connection con = new ConnectionFactory().getConnection();
             PreparedStatement stmt = con.prepareStatement(sql)){
@@ -84,6 +83,8 @@ public class CupomDAO {
     public List<Cupom> getLista() {
 
         String sql = "select * from Cupom";
+        
+            List<Cupom> cupons = new ArrayList<>();
 
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql);
@@ -183,13 +184,13 @@ public class CupomDAO {
     
     public boolean alterar(Cupom cupom) {
         
-        String sql = "Uptade Cupom" 
-                + "set codigo = ?"
-                + "tipo_desconto = ?"
-                + "valor_minimo_pedido = ?"
-                + "data_validade = ?"
-                + "ativo = ?"
-                + "data_moficacao = ?"
+        String sql = "UPDATE Cupom SET " 
+                + "codigo = ?, "
+                + "tipo_desconto = ?, "
+                + "valor_minimo_pedido = ?, "
+                + "data_validade = ?, "
+                + "ativo = ?, "
+                + "data_modificacao = ? "
                 + "where id = ?";
         try(Connection con = new ConnectionFactory().getConnection();
             PreparedStatement stmt = con.prepareStatement(sql)){
@@ -213,9 +214,13 @@ public class CupomDAO {
 
             stmt.setLong(7,
                 cupom.getId());
-            return true;
+            
+            int linhas = stmt.executeUpdate();
+
+            return linhas > 0;
             
         }catch(SQLException e){
+            //e.printStackTrace();
             return false;
         }
 
@@ -241,7 +246,7 @@ public class CupomDAO {
     }
     
     public void Mostrar(){
-        cupons = getLista();
+        List<Cupom> cupons = getLista();
         for(Cupom cupom : cupons){
             System.out.println(cupom.toString());
         }

@@ -18,7 +18,7 @@ import java.util.List;
 
 public class PessoaDAO {
     
-     List<Pessoa> pessoas = getLista();
+
      public Pessoa adicionar(Pessoa elemento) {
         String sql = "insert into Pessoa "
                 + "(nome,nascimento,documento,data_criacao,data_modificacao )" + " values (?,?,?,?,?)";
@@ -46,8 +46,7 @@ public class PessoaDAO {
 
         String sql = "select * from Pessoa";
 
-       
-
+         List<Pessoa> pessoas = new ArrayList<>();
         try (Connection con = new ConnectionFactory().getConnection();
              PreparedStatement stmt = con.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -145,12 +144,12 @@ public class PessoaDAO {
     
     public void alterar(Pessoa pessoa) {
         
-        String sql = "Uptade Pessoa" 
-                + "set nome = ?"
-                + "nascimento = ?"
-                + "documento = ?"
-                + "data_moficacao = ?"
-                + "where id = ?";
+        String sql = "Uptade Pessoa SET " 
+                + "nome = ?, "
+                + "nascimento = ?, "
+                + "documento = ?, "
+                + "data_moficacao = ? "
+                + "where id = ?" ;
         try(Connection con = new ConnectionFactory().getConnection();
             PreparedStatement stmt = con.prepareStatement(sql)){
             
@@ -163,7 +162,7 @@ public class PessoaDAO {
                     pessoa.getData_modificacao()));
             stmt.setLong(5, pessoa.getId());
             
-            stmt.execute();
+            stmt.executeUpdate();
             
             System.out.println("Pessoa alterada com sucesso.");
             
@@ -194,7 +193,7 @@ public class PessoaDAO {
     }
     
     public void Mostrar(){
-        pessoas = getLista();
+        List<Pessoa> pessoas = getLista();
         for(Pessoa pessoa : pessoas){
             System.out.println(pessoa.toString());
         }
